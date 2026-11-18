@@ -2,7 +2,7 @@
 
 Mọi thứ bàn nộp nằm trong thư mục này, trên **repo của bàn**. Một team chấm tự động sẽ chấm **sau buổi học**; tại lớp không ai cho điểm.
 
-Tên repo phải đúng dạng `K5_Day10_3A_<TenNhom>` hoặc `K5_Day10_3B_<TenNhom>` (ví dụ `K5_Day10_3A_XXX`). `3A` / `3B` là lớp của bàn. `TenNhom` viết không dấu, không khoảng trắng. Không viết thêm chữ `Lop`.
+Tên repo phải đúng dạng `K5-L3A-DAY10-<TenNhom>-PoCtoPilotGate1` hoặc `K5-L3B-DAY10-<TenNhom>-PoCtoPilotGate1` (ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`). `L3A` / `L3B` là lớp của bàn (lớp 3A hoặc 3B). `TenNhom` viết không dấu, không khoảng trắng. Không viết thêm chữ `Lop`.
 
 ## Làm ba bước
 
@@ -10,7 +10,7 @@ Tên repo phải đúng dạng `K5_Day10_3A_<TenNhom>` hoặc `K5_Day10_3B_<TenN
 
 | Trường | Điền gì | Ví dụ |
 |---|---|---|
-| `team` | Tên bàn = đúng tên repo, giống hệt `team` trong Bản tiêu chí đã ký | `"K5_Day10_3A_XXX"` |
+| `team` | Tên bàn = đúng tên repo, giống hệt `team` trong Bản tiêu chí đã ký | `"K5-L3A-DAY10-XXX-PoCtoPilotGate1"` |
 | `members` | Họ tên không dấu và MSSV của mọi thành viên, khớp `TEAM.md` | `["NguyenVanAn-20241234", "TranThiBinh-20245678"]` |
 | `incident` | Số thẻ bàn bốc được | `"S4"` |
 | `decision_v1` | Quyết định Gate 1 bản v1 | `"Tiếp tục"` |
@@ -38,7 +38,7 @@ git commit -m "LAB 10: bài nộp"
 git push -u origin main
 ```
 
-Link gửi đi là URL repo của bàn, ví dụ `https://github.com/<tài-khoản>/K5_Day10_3A_XXX`. Team chấm cần đã được mời vào repo (README mục 2, bước 1). **Mỗi thành viên** tự nộp link này trên LMS trước deadline (GMT+7, xem [`SUBMISSION.md`](../SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu.
+Link gửi đi là URL repo của bàn, ví dụ `https://github.com/<tài-khoản>/K5-L3A-DAY10-XXX-PoCtoPilotGate1`. Team chấm cần đã được mời vào repo (README mục 2, bước 1). **Mỗi thành viên** tự nộp link này trên LMS trước deadline (GMT+7, xem [`SUBMISSION.md`](../SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu.
 
 
 ## Bài nộp gồm gì

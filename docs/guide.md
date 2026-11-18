@@ -20,7 +20,7 @@ Lab đã được chạy thử với Python 3.9.6 có sẵn trên macOS và Pyth
 
 Gõ `git --version` để kiểm tra Git. Nếu không hiện số phiên bản, báo Lab Coach. Trên macOS mới, `python3` hoặc `git` có thể mở cửa sổ cài Command Line Tools. Cài xong thì chạy lại. Trên Windows, thử `python` nếu `python3` không chạy.
 
-Trưởng nhóm bấm **Fork** (hoặc **Use this template**) ở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`. Đặt tên theo dạng `K5_Day10_<3A|3B>_<TenNhom>`, chọn đúng lớp, ví dụ `K5_Day10_3A_XXX`. Viết phần `TenNhom` không dấu, không khoảng trắng, như `NhomSao`. Nếu muốn repo **Private** (Riêng tư), dùng **Use this template**: GitHub không cho đổi một fork của repo công khai sang riêng tư. Vào **Settings → Collaborators** (Người cộng tác) → **Add people** (Thêm người) để mời `<TÀI_KHOẢN_TEAM_CHẤM>` với quyền **Read** (Đọc) trở lên. Nếu thiếu thông tin, hỏi Lab Coach.
+Trưởng nhóm bấm **Fork** (hoặc **Use this template**) ở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`. Đặt tên theo dạng `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, chọn đúng lớp, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`. Viết phần `TenNhom` không dấu, không khoảng trắng, như `NhomSao`. Nếu muốn repo **Private** (Riêng tư), dùng **Use this template**: GitHub không cho đổi một fork của repo công khai sang riêng tư. Vào **Settings → Collaborators** (Người cộng tác) → **Add people** (Thêm người) để mời `<TÀI_KHOẢN_TEAM_CHẤM>` với quyền **Read** (Đọc) trở lên. Nếu thiếu thông tin, hỏi Lab Coach.
 
 Mở Terminal trên macOS hoặc Linux, hoặc PowerShell trên Windows. Chạy mọi lệnh từ thư mục lab, nơi có `README.md`, sau khi đã clone và vào thư mục của bàn. Nếu gặp `already exists` khi gắn `upstream`, chỉ cần dùng `git remote -v` để kiểm tra. `origin` trỏ về repo của bàn và `upstream` trỏ về repo mẫu. Thiếu `upstream` thì không nhận được thẻ ở phút 125.
 
@@ -628,5 +628,5 @@ KIỂM BÀI NỘP (submission/) · đây là kiểm ĐỦ THÀNH PHẦN, không 
 Sửa rồi chạy lại đến khi dòng cuối bắt đầu bằng `ĐỦ THÀNH PHẦN`.
 
 ```
-ĐỦ THÀNH PHẦN. Đẩy lên repo của bàn (tên đúng dạng K5_Day10_3A_<TenNhom> hoặc K5_Day10_3B_<TenNhom>, ví dụ K5_Day10_3A_XXX; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm theo cách Lab Coach hướng dẫn.
+ĐỦ THÀNH PHẦN. Đẩy lên repo của bàn (tên đúng dạng K5-L3A-DAY10-<TenNhom>-PoCtoPilotGate1 hoặc K5-L3B-DAY10-<TenNhom>-PoCtoPilotGate1, ví dụ K5-L3A-DAY10-XXX-PoCtoPilotGate1; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm theo cách Lab Coach hướng dẫn.
 ```

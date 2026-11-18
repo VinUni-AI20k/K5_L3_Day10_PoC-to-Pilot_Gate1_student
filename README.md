@@ -37,15 +37,15 @@ Bạn cần Python 3 và Git; không cần cài gói, tài khoản hay khoá API
 **Bước 1. Trưởng nhóm tạo repo của bàn trên GitHub.**
 
 1. Mở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`, bấm **Fork** (hoặc **Use this template** → **Create a new repository**).
-2. Đặt tên đúng dạng `K5_Day10_<3A|3B>_<TenNhom>`, ví dụ `K5_Day10_3A_XXX`. `3A`/`3B` là lớp của bàn. `TenNhom` không dấu, không khoảng trắng (viết `NhomSao`, không viết “Nhóm Sao”).
+2. Đặt tên đúng dạng `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`. `L3A`/`L3B` là lớp của bàn (lớp 3A hoặc 3B). `TenNhom` không dấu, không khoảng trắng (viết `NhomSao`, không viết “Nhóm Sao”).
 3. Muốn repo **Private** (Riêng tư) thì dùng **Use this template**: GitHub không cho đổi fork của một repo công khai sang riêng tư.
 4. **Settings → Collaborators → Add people**: mời `<TÀI_KHOẢN_TEAM_CHẤM>` với quyền **Read** trở lên. Nếu chưa có tên tài khoản, hỏi Lab Coach. Mời thêm các bạn trong bàn nếu cần.
 
 **Bước 2. Lấy repo về máy** (thay bằng URL repo bàn vừa tạo):
 
 ```bash
-git clone https://github.com/<tài-khoản-trưởng-nhóm>/K5_Day10_3A_XXX.git
-cd K5_Day10_3A_XXX
+git clone https://github.com/<tài-khoản-trưởng-nhóm>/K5-L3A-DAY10-XXX-PoCtoPilotGate1.git
+cd K5-L3A-DAY10-XXX-PoCtoPilotGate1
 ```
 
 Mọi lệnh trong lab chạy từ thư mục này (nơi có `README.md`).
@@ -89,7 +89,7 @@ Ba mốc đo: `base` bỏ qua cổng của bàn; `prepared` dùng cổng vòng 1
 ### Phút 15–65 · Khối 1: tiêu chí, rồi ký · **Phiếu A**
 
 - **Làm (15–60):** câu 1.1–1.2 (Phiếu A mục A1) · câu 1.3–1.4, bảng thước đo → dữ liệu → cách tính (A2) · câu 1.5, đọc khoảng tin cậy từ số minh hoạ trong đề (A3) · câu 1.6, câu tiêu chí "Nếu … thì chúng tôi sẽ …", bốn câu soát, hai câu ranh giới đầu ra (A4). **Chưa chạy trợ lý.**
-- **Sửa:** `config/acceptance_criteria.json`: `team` (= đúng tên repo của bàn, ví dụ `K5_Day10_3A_XXX`), `signed_by`; trong `required`: `pass_rate_min`, `pass_k_min`, `wrongful_refund_vnd_max`, `wrongful_carrier_faults_max`, `pii_leaks_max`; `nice_to_have.escalation_rate_max`; trong `business_ops`: `cost_per_ticket_vnd_max`, `roi_min`, `queue_stuck_max`; `stop_condition`; bốn dòng `decision_rule`. Xem cách viết ở `config/acceptance_criteria.example.json`, đừng chép ngưỡng.
+- **Sửa:** `config/acceptance_criteria.json`: `team` (= đúng tên repo của bàn, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`), `signed_by`; trong `required`: `pass_rate_min`, `pass_k_min`, `wrongful_refund_vnd_max`, `wrongful_carrier_faults_max`, `pii_leaks_max`; `nice_to_have.escalation_rate_max`; trong `business_ops`: `cost_per_ticket_vnd_max`, `roi_min`, `queue_stuck_max`; `stop_condition`; bốn dòng `decision_rule`. Xem cách viết ở `config/acceptance_criteria.example.json`, đừng chép ngưỡng.
 - **Lệnh (60–65), ngay khi điền xong, trước khi chạy đánh giá lần nào** (lệnh 1, rồi đúng dòng Git máy in ra):
 
 ```bash
@@ -268,4 +268,4 @@ git commit -m "LAB 10: bài nộp"
 git push -u origin main
 ```
 
-Gửi link repo, ví dụ `https://github.com/<tài-khoản-trưởng-nhóm>/K5_Day10_3A_XXX`, cho team chấm theo cách Lab Coach hướng dẫn. **Mỗi thành viên** còn phải tự nộp link này trên LMS trước deadline ([`SUBMISSION.md`](SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu (`upstream`).
+Gửi link repo, ví dụ `https://github.com/<tài-khoản-trưởng-nhóm>/K5-L3A-DAY10-XXX-PoCtoPilotGate1`, cho team chấm theo cách Lab Coach hướng dẫn. **Mỗi thành viên** còn phải tự nộp link này trên LMS trước deadline ([`SUBMISSION.md`](SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu (`upstream`).

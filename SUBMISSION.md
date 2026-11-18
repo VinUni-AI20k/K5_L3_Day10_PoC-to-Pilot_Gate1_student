@@ -9,9 +9,9 @@
 | Loại | Tên | Ghi chú |
 |---|---|---|
 | Repo đề (repo mẫu) | `K5_L3_Day10_PoC-to-Pilot_Gate1_student` | Không push lên repo này |
-| Repo bài nộp của bàn | `K5_Day10_<3A\|3B>_<TenNhom>` | Ví dụ `K5_Day10_3A_NhomSao`. `TenNhom` không dấu, không khoảng trắng, không thêm chữ `Lop` |
+| Repo bài nộp của bàn | `K5-<L3A\|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1` | Ví dụ `K5-L3A-DAY10-NhomSao-PoCtoPilotGate1`. `TenNhom` không dấu, không khoảng trắng, không thêm chữ `Lop` |
 
-Lab này giữ dạng `K5_Day10_<lớp>_<TenNhom>` vì lệnh gom bài (`lab10/check_submission.py`) và team chấm tự động dùng đúng dạng đó. Giá trị `team` trong `config/acceptance_criteria.json` và `submission/submission.json` phải **giống hệt** tên repo.
+Tên theo quy ước chung của khóa: `Kn-L3{A|B}-DAYxx-TenNhom-TenBai`. Với lab này, `TenBai` là `PoCtoPilotGate1`. Giá trị `team` trong `config/acceptance_criteria.json` và `submission/submission.json` phải **giống hệt** tên repo.
 
 ## Cấu trúc và deliverable phải nộp
 
@@ -43,7 +43,7 @@ Commit sau hạn chót không được tính; team chấm lấy commit cuối c�
 
 ## Checklist
 
-- [ ] Repo của bàn đúng tên `K5_Day10_<3A|3B>_<TenNhom>`, đã mời team chấm.
+- [ ] Repo của bàn đúng tên `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, đã mời team chấm.
 - [ ] `TEAM.md` có đủ họ tên, MSSV, vai của mọi thành viên và mục `## HoVaTen-MSSV` của từng người.
 - [ ] Tiêu chí đã ký, commit và push **trước** lần đánh giá đầu tiên.
 - [ ] Đã chốt cổng vòng 1 (lệnh 5) trước phút 115.

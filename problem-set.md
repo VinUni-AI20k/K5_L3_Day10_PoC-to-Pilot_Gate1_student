@@ -188,7 +188,7 @@ Bài nộp là thư mục `submission/`. Cách làm và danh sách đầy đủ:
 
 1. Điền `submission/submission.json`: tên bàn, thành viên, số thẻ, quyết định v1 và v2, ba dòng bắt buộc (chép từ Phiếu C mục C12).
 2. Chạy `python3 -m lab10.check_submission --collect`. Lệnh gom: code cổng vòng 1 (bản chốt) và vòng 2, config cổng kinh doanh + vận hành + pháp lý (bản vòng 1 và bản hiện tại), tiêu chí đã ký kèm hash, mã lần chạy và report của ba mốc, nhật ký mọi lần chạy (`runs/journal.jsonl`), và **ba phiếu A, B, C**.
-3. Sửa các dòng `THIẾU` tới khi lệnh in `ĐỦ THÀNH PHẦN`. Rồi đẩy lên repo của bàn (tên đúng dạng `K5_Day10_3A_<TenNhom>` hoặc `K5_Day10_3B_<TenNhom>`, ví dụ `K5_Day10_3A_XXX`; TenNhom không dấu, không cách):
+3. Sửa các dòng `THIẾU` tới khi lệnh in `ĐỦ THÀNH PHẦN`. Rồi đẩy lên repo của bàn (tên đúng dạng `K5-L3A-DAY10-<TenNhom>-PoCtoPilotGate1` hoặc `K5-L3B-DAY10-<TenNhom>-PoCtoPilotGate1`, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`; TenNhom không dấu, không cách):
    `git add -u && git add submission templates TEAM.md && git commit -m "LAB 10: bài nộp" && git push -u origin main`
    Gửi **link repo** cho team chấm theo cách Lab Coach hướng dẫn; **mỗi thành viên** tự nộp link trên LMS trước deadline (GMT+7, [`SUBMISSION.md`](SUBMISSION.md)). Thang điểm: [`RUBRIC.md`](RUBRIC.md).
 
