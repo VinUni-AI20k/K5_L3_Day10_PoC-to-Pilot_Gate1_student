@@ -1,6 +1,6 @@
 # LAB 10 · From PoC to Pilot (Gate 1)
 
-> **Bài nhóm** (một bàn 4–5 người, một repo chung). **Mỗi thành viên tự nộp link repo của bàn trên LMS** trước deadline (GMT+7): lab sáng 23h59 cùng ngày, lab chiều/tối 11h59 hôm sau. Chi tiết: [`SUBMISSION.md`](SUBMISSION.md).
+> **Bài nhóm** (một bàn 3–4 người, một repo chung). **Mỗi thành viên tự nộp link repo của bàn trên LMS** trước deadline (GMT+7): lab sáng 23h59 cùng ngày, lab chiều/tối 11h59 hôm sau. Chi tiết: [`SUBMISSION.md`](SUBMISSION.md).
 >
 > Nộp gì, khi nào: [`SUBMISSION.md`](SUBMISSION.md) · Chấm thế nào: [`RUBRIC.md`](RUBRIC.md) · Các mốc tự kiểm tra: [`CHECKPOINTS.md`](CHECKPOINTS.md) · Luật chung (AI, liêm chính, nộp muộn): [`RULES.md`](RULES.md) · Thành viên: [`TEAM.md`](TEAM.md).
 

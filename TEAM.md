@@ -17,7 +17,6 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; thêm dòng nếu 
 |   2 |           |      |     |             |
 |   3 |           |      |     |             |
 |   4 |           |      |     |             |
-|   5 |           |      |     |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
 

@@ -2,7 +2,7 @@
 
 ## Loại bài
 
-**Nhóm** (một bàn 4–5 người). Một repo cho cả bàn, do trưởng nhóm tạo, kèm [`TEAM.md`](TEAM.md) điền đầy đủ.
+**Nhóm** (một bàn 3–4 người). Một repo cho cả bàn, do trưởng nhóm tạo, kèm [`TEAM.md`](TEAM.md) điền đầy đủ.
 
 ## Đặt tên repo
 
