@@ -628,5 +628,5 @@ KIỂM BÀI NỘP (submission/) · đây là kiểm ĐỦ THÀNH PHẦN, không 
 Sửa rồi chạy lại đến khi dòng cuối bắt đầu bằng `ĐỦ THÀNH PHẦN`.
 
 ```
-ĐỦ THÀNH PHẦN. Đẩy lên repo của bàn (tên đúng dạng K5-L3A-DAY10-<TenNhom>-PoCtoPilotGate1 hoặc K5-L3B-DAY10-<TenNhom>-PoCtoPilotGate1, ví dụ K5-L3A-DAY10-XXX-PoCtoPilotGate1; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm theo cách Lab Coach hướng dẫn.
+ĐỦ THÀNH PHẦN. Đẩy lên repo của bàn (tên đúng dạng K5_Day10_3A_<TenNhom> hoặc K5_Day10_3B_<TenNhom>, ví dụ K5_Day10_3A_XXX; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm theo cách Lab Coach hướng dẫn.
 ```
