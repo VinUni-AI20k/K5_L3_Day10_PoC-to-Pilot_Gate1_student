@@ -36,9 +36,9 @@ Bạn cần Python 3 và Git; không cần cài gói, tài khoản hay khoá API
 
 **Bước 1. Trưởng nhóm tạo repo của bàn trên GitHub.**
 
-1. Mở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`, bấm **Fork** (hoặc **Use this template** → **Create a new repository**).
+1. Mở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`, bấm **Use this template** → **Create a new repository**. Không dùng **Fork**.
 2. Đặt tên đúng dạng `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`. `L3A`/`L3B` là lớp của bàn (lớp 3A hoặc 3B). `TenNhom` không dấu, không khoảng trắng (viết `NhomSao`, không viết “Nhóm Sao”).
-3. Muốn repo **Private** (Riêng tư) thì dùng **Use this template**: GitHub không cho đổi fork của một repo công khai sang riêng tư.
+3. Chọn **Private** (Riêng tư). Repo Public, hay một fork của repo mẫu (fork của repo công khai luôn công khai, không đổi sang riêng tư được), thì ai cũng xem được tiêu chí, cổng và bài làm của bàn.
 4. **Settings → Collaborators → Add people**: mời `<TÀI_KHOẢN_TEAM_CHẤM>` với quyền **Read** trở lên. Nếu chưa có tên tài khoản, hỏi Lab Coach. Mời thêm các bạn trong bàn nếu cần.
 
 **Bước 2. Lấy repo về máy** (thay bằng URL repo bàn vừa tạo):
@@ -50,7 +50,7 @@ cd K5-L3A-DAY10-XXX-PoCtoPilotGate1
 
 Mọi lệnh trong lab chạy từ thư mục này (nơi có `README.md`).
 
-**Bước 2a. Gắn repo mẫu một lần để nhận thẻ ở phút 125** (làm cả khi bàn tạo repo bằng Fork; clone về chỉ có `origin`). Phải thấy `origin` trỏ về repo của bàn, `upstream` trỏ về repo mẫu. Nếu báo `already exists`, chỉ cần kiểm bằng `git remote -v`.
+**Bước 2a. Gắn repo mẫu một lần để nhận thẻ ở phút 125** (clone về chỉ có `origin`). Phải thấy `origin` trỏ về repo của bàn, `upstream` trỏ về repo mẫu. Nếu báo `already exists`, chỉ cần kiểm bằng `git remote -v`.
 
 ```bash
 git remote add upstream https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student.git
