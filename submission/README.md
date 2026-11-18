@@ -11,7 +11,7 @@ Tên repo phải đúng dạng `K5_Day10_3A_<TenNhom>` hoặc `K5_Day10_3B_<TenN
 | Trường | Điền gì | Ví dụ |
 |---|---|---|
 | `team` | Tên bàn = đúng tên repo, giống hệt `team` trong Bản tiêu chí đã ký | `"K5_Day10_3A_XXX"` |
-| `members` | Họ tên các thành viên | `["Nguyễn A", "Trần B"]` |
+| `members` | Họ tên không dấu và MSSV của mọi thành viên, khớp `TEAM.md` | `["NguyenVanAn-20241234", "TranThiBinh-20245678"]` |
 | `incident` | Số thẻ bàn bốc được | `"S4"` |
 | `decision_v1` | Quyết định Gate 1 bản v1 | `"Tiếp tục"` |
 | `decision_v2` | Quyết định Gate 1 bản v2 | `"Thu hẹp"` |
@@ -33,12 +33,12 @@ Lệnh này tự chép vào đây: code cổng vòng 1 và vòng 2, config cổn
 
 ```bash
 git add -u
-git add submission templates README.md
+git add submission templates TEAM.md
 git commit -m "LAB 10: bài nộp"
 git push -u origin main
 ```
 
-Link gửi đi là URL repo của bàn, ví dụ `https://github.com/<tài-khoản>/K5_Day10_3A_XXX`. Team chấm cần đã được mời vào repo (README mục 2, bước 1). Không push lên repo mẫu.
+Link gửi đi là URL repo của bàn, ví dụ `https://github.com/<tài-khoản>/K5_Day10_3A_XXX`. Team chấm cần đã được mời vào repo (README mục 2, bước 1). **Mỗi thành viên** tự nộp link này trên LMS trước deadline (GMT+7, xem [`SUBMISSION.md`](../SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu.
 
 
 ## Bài nộp gồm gì

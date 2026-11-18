@@ -20,7 +20,7 @@ Demo cuối buổi so sánh ba mốc **base · prepared · after**: cổng bàn 
 
 | Phần | Phút trên đồng hồ lab | Thời lượng | Phiếu |
 |---|---|---|---|
-| Mở đầu, cài đặt, chia vai | 0–15 | 15' | (README: bảng thành viên) |
+| Mở đầu, cài đặt, chia vai | 0–15 | 15' | (`TEAM.md`: bảng thành viên) |
 | Khối 1 · Mục tiêu và đo lường (viết xong Bản tiêu chí) | 15–60 | 45' | A |
 | **Ký tiêu chí** (trước khi chạy đánh giá lần nào) | 60–65 | 5' | A mục A5 |
 | Khối 2A · Tìm rủi ro trước khi nó xảy ra | 65–85 | 20' | B |
@@ -189,7 +189,7 @@ Bài nộp là thư mục `submission/`. Cách làm và danh sách đầy đủ:
 1. Điền `submission/submission.json`: tên bàn, thành viên, số thẻ, quyết định v1 và v2, ba dòng bắt buộc (chép từ Phiếu C mục C12).
 2. Chạy `python3 -m lab10.check_submission --collect`. Lệnh gom: code cổng vòng 1 (bản chốt) và vòng 2, config cổng kinh doanh + vận hành + pháp lý (bản vòng 1 và bản hiện tại), tiêu chí đã ký kèm hash, mã lần chạy và report của ba mốc, nhật ký mọi lần chạy (`runs/journal.jsonl`), và **ba phiếu A, B, C**.
 3. Sửa các dòng `THIẾU` tới khi lệnh in `ĐỦ THÀNH PHẦN`. Rồi đẩy lên repo của bàn (tên đúng dạng `K5_Day10_3A_<TenNhom>` hoặc `K5_Day10_3B_<TenNhom>`, ví dụ `K5_Day10_3A_XXX`; TenNhom không dấu, không cách):
-   `git add -u && git add submission templates && git commit -m "LAB 10: bài nộp" && git push -u origin main`
-   Gửi **link repo** cho team chấm theo cách Lab Coach hướng dẫn.
+   `git add -u && git add submission templates TEAM.md && git commit -m "LAB 10: bài nộp" && git push -u origin main`
+   Gửi **link repo** cho team chấm theo cách Lab Coach hướng dẫn; **mỗi thành viên** tự nộp link trên LMS trước deadline (GMT+7, [`SUBMISSION.md`](SUBMISSION.md)). Thang điểm: [`RUBRIC.md`](RUBRIC.md).
 
 Lệnh này chỉ kiểm **đủ thành phần**. Team chấm sẽ chấm sau buổi học theo ba lớp: phần máy đo (bài kiểm tra ẩn, chỉ số kinh doanh và vận hành, mức chuẩn bị ở mốc prepared, hash, không làm hỏng ca đang đúng); phần người đọc (pre-mortem và HAZOP có phủ kinh doanh, con người, pháp lý; checklist có PIC; runbook; phân tích sự cố ở Phiếu C; ba dòng bắt buộc; câu trả lời lúc demo); và điều kiện qua (quyết định khớp bằng chứng và tiêu chí đã ký).
