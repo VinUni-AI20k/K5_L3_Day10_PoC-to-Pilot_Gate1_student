@@ -38,8 +38,8 @@ Bạn cần Python 3 và Git; không cần cài gói, tài khoản hay khoá API
 
 1. Mở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`, bấm **Use this template** → **Create a new repository**. Không dùng **Fork**.
 2. Đặt tên đúng dạng `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`. `L3A`/`L3B` là lớp của bàn (lớp 3A hoặc 3B). `TenNhom` không dấu, không khoảng trắng (viết `NhomSao`, không viết “Nhóm Sao”).
-3. Chọn **Private** (Riêng tư). Repo Public, hay một fork của repo mẫu (fork của repo công khai luôn công khai, không đổi sang riêng tư được), thì ai cũng xem được tiêu chí, cổng và bài làm của bàn.
-4. **Settings → Collaborators → Add people**: mời `<TÀI_KHOẢN_TEAM_CHẤM>` với quyền **Read** trở lên. Nếu chưa có tên tài khoản, hỏi Lab Coach. Mời thêm các bạn trong bàn nếu cần.
+3. Chọn **Public** (Công khai). Team chấm đọc bài qua link repo, nên bàn không cần mời team chấm.
+4. Nếu các bạn trong bàn cần push: **Settings → Collaborators → Add people**, mời các bạn đó.
 
 **Bước 2. Lấy repo về máy** (thay bằng URL repo bàn vừa tạo):
 
