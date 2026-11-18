@@ -30,9 +30,9 @@ Mỗi checkpoint ứng với một mốc trong [Timeline ở README mục 3](REA
 
 - **Mục tiêu:** đo cổng vòng 1 đỡ được gì, rồi sửa đúng chỗ.
 - **Cần làm:** kéo thẻ (`incidents/README.md`); ghi `Thẻ đã bốc:`; lệnh 6 trước khi sửa; câu 3.0–3.7; thêm ít nhất một chỉ số trong `lab10/monitors.py`.
-- **Sản phẩm:** Phiếu C mục C1–C11; report có `base · prepared · after`.
+- **Sản phẩm:** Phiếu C mục C0–C11 (bàn bốc thẻ S4 không cần điền C3); report có `base · prepared · after`.
 - **Cần hiểu:** sửa là **giảm** hay **ngăn** tác hại; fault tree có nhánh ngoài kỹ thuật.
-- **Tự kiểm tra:** report có `1 integrity ✅`, `monitor ✅`, `regression ✅`.
+- **Tự kiểm tra:** report có `1 integrity ✅`, `3 visible ✅`, `5 regression ✅`, `6 monitor ✅`. Hai dòng `visible` và `regression` chỉ ✅ khi độ phủ pilot lớn hơn 0. Thu hẹp phạm vi về 0 không phải cách sửa.
 
 ## CP5 · Quyết định v2, demo, nộp (phút 185–240)
 
@@ -40,4 +40,4 @@ Mỗi checkpoint ứng với một mốc trong [Timeline ở README mục 3](REA
 - **Cần làm:** Phiếu C mục C12; `submission/submission.json` (`members` dạng `HoVaTen-MSSV`); lệnh 7; demo; đẩy bài.
 - **Sản phẩm:** thư mục `submission/` đầy đủ; mục cá nhân trong `TEAM.md`.
 - **Cần hiểu:** vì sao chọn Tiếp tục khi còn vượt trần là quyết định không đạt.
-- **Tự kiểm tra:** lệnh 7 in `ĐỦ THÀNH PHẦN`; mỗi thành viên đã nộp link trên LMS ([`SUBMISSION.md`](SUBMISSION.md)).
+- **Tự kiểm tra:** lệnh 7 không báo mục phiếu nào còn nguyên mẫu và in `ĐỦ THÀNH PHẦN`; mỗi thành viên đã nộp link trên LMS ([`SUBMISSION.md`](SUBMISSION.md)).
