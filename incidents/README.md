@@ -19,7 +19,7 @@ Thư mục này cố ý để trống lúc đầu buổi. Đây là chỗ các *
 
    Nếu máy báo `Please tell me who you are`, làm bước 2b rồi chạy lại. Nếu báo xung đột, chạy `git merge --abort` rồi chạy lại đúng đủ lệnh trên, hoặc gọi Lab Coach.
 
-2. Bạn sẽ thấy 8 thư mục mới `incidents/S1/` … `incidents/S8/`, và một file mới `incident-cards.md` nằm cạnh `README.md`.
+2. Bạn sẽ thấy 8 thư mục mới `incidents/S1/` … `incidents/S8/`, và một file mới `incident-cards.md` ở **gốc repo** (cùng chỗ với `README.md` chính, không nằm trong `incidents/`).
 3. Mỗi **cặp bàn** (Lab Coach đã ghép sẵn) cử một người lên **bốc số**; hai bàn trong cặp làm cùng một thẻ. Số bốc được là một trong S1–S8. Lab Coach ghi số đó vào sổ.
 4. Bàn **chỉ làm đúng thẻ đã bốc**. Mở `incidents/Sx/card.md` (thay `Sx` bằng số của bàn) và đọc mặt trước.
 5. Ghi số đó vào dòng `Thẻ đã bốc:` ở đầu Phiếu C (`templates/form-c-incident.md`).

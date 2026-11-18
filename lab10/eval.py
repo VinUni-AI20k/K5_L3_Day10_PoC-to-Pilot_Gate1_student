@@ -240,10 +240,12 @@ def segment_text(seg: dict) -> str:
          "  Dùng khi điền dòng 'Kho hoặc hãng có số xấu nhất' ở Phiếu B mục B8 (v1) và Phiếu C mục C12 (v2): templates/form-b-evaluation-gates.md, templates/form-c-incident.md."]
 
     def fmt(title: str, rows: list[dict]) -> None:
-        L.append(f"  {title:6}  trials  pass_rate  hoàn sai   lỗi hãng oan  lộ PII")
+        L.append(f"  {title:7}  trials  pass_rate  hoàn sai   lỗi hãng oan  lộ PII  chi phí/ticket")
         for r in rows:
-            L.append(f"  {r['id']:6}  {r['trials']:6}  {r['pass_rate']:<9}  {r['wrongful_refund_vnd']:<9}  "
-                     f"{r['wrongful_carrier_faults']:<13}  {r['pii_leaks']}")
+            cost = r.get("cost_per_ticket_vnd")
+            cost = "—" if cost is None else f"{cost}đ" + (" > làm tay" if r.get("worse_than_manual") else "")
+            L.append(f"  {r['id']:7}  {r['trials']:6}  {r['pass_rate']:<9}  {r['wrongful_refund_vnd']:<9}  "
+                     f"{r['wrongful_carrier_faults']:<13}  {r['pii_leaks']:<6}  {cost}")
 
     fmt("kho", seg.get("warehouse") or [])
     fmt("hãng", seg.get("carrier") or [])
@@ -292,9 +294,12 @@ def evaluate(suite: str, stage: str, pack_dir=None) -> tuple[dict, list[dict]]:
     out = sum(not ops.in_scope(t, world_data, gates) for t in tickets)
     o = ops.summarize_ops(trials, world_data, gates, out)          # also fills the queue fields of every trial
     mons = importlib.import_module("lab10.monitors")
+    seg = segment_breakdown(trials, world_data)
+    for row in seg["warehouse"]:                                   # chi phí mỗi ticket theo kho (cùng số với ops.segments)
+        s = o["segments"].get(row["id"]) or {}
+        row["cost_per_ticket_vnd"], row["worse_than_manual"] = s.get("cost_per_ticket_vnd"), s.get("worse_than_manual")
     return {"suite": suite, "stage": stage, **summarize(trials), **ops.flat(o), "ops": o,
-            "monitors": run_monitors(trials, mons),
-            "by_segment": segment_breakdown(trials, world_data)}, trials
+            "monitors": run_monitors(trials, mons), "by_segment": seg}, trials
 
 
 def write_run(report: dict, trials: list[dict], note: str) -> Path:

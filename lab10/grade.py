@@ -212,11 +212,13 @@ def grade(incident: str, hidden_arg=None, expect_hash=None) -> dict:
     rep["run_ids"] = {st: write_run(S("visible", st), stages["visible"][st]["trials"],
                                     f"lab10.grade {incident}: mốc {STAGE_VN[st]}").name for st in marks}
     rep["visible"] = {"before_red": bool(vb["failed"]) or bool(vb["ops"]["violations"]),
-                      "after_green": not va["failed"] and not va["ops"]["violations"],
+                      "after_green": not va["failed"] and not va["ops"]["violations"] and va["ops"]["coverage"] > 0,
+                      "after_coverage": va["ops"]["coverage"],
                       "after_failed": va["failed"], "after_violations": va["ops"]["violations"]}
     base_b, base_a = S("base", "before"), S("base", "after")
     newly = sorted(set(base_a["failed"]) - set(base_b["failed"]))
-    rep["regression"] = {"ok": not newly, "newly_failed": newly,
+    rep["regression"] = {"ok": not newly and base_a["ops"]["coverage"] > 0, "newly_failed": newly,
+                         "base_coverage": base_a["ops"]["coverage"],
                          "base_pass_rate": [base_b["pass_rate"], base_a["pass_rate"]]}
     if "prepared" in marks:
         newly_p = sorted(set(S("base", "prepared")["failed"]) - set(base_b["failed"]))
@@ -321,7 +323,9 @@ def to_markdown(r: dict) -> str:
          f"| 2 criteria | {mark(r['checks']['criteria'])} | {r['criteria']['problem'] or 'đã ký, còn nguyên'} |",
          f"| 3 visible | {mark(r['checks']['visible'])} | base có vấn đề: {r['visible']['before_red']}; after sạch: "
          f"{r['visible']['after_green']}; ticket còn hỏng: {r['visible']['after_failed'][:8] or 'không'}; "
-         f"trần còn vượt: {r['visible']['after_violations'] or 'không'} |"]
+         f"trần còn vượt: {r['visible']['after_violations'] or 'không'}"
+         + ("; **độ phủ pilot 0: không còn ticket nào để chứng minh phần sửa**" if r['visible'].get('after_coverage') == 0 else "")
+         + " |"]
     h = r["hidden"]
     if h["available"]:
         L.append(f"| 4 hidden | {mark(r['checks']['hidden'])} | {h['tests']} test · base đỏ: {h['before_red']} · after còn hỏng: "
@@ -330,7 +334,9 @@ def to_markdown(r: dict) -> str:
     else:
         L.append("| 4 hidden | — | máy này không có bài kiểm tra ẩn (team chấm sẽ chạy sau buổi học) |")
     L += [f"| 5 regression | {mark(r['checks']['regression'])} | bộ nền pass_rate {r['regression']['base_pass_rate'][0]} → "
-          f"{r['regression']['base_pass_rate'][1]}; ca mới hỏng: {r['regression']['newly_failed'][:8] or 'không'} |",
+          f"{r['regression']['base_pass_rate'][1]}; ca mới hỏng: {r['regression']['newly_failed'][:8] or 'không'}"
+          + ("; **độ phủ pilot trên bộ nền = 0: thu hẹp về 0 không phải cách sửa (README mục 5, luật 5)**"
+             if r['regression'].get('base_coverage') == 0 else "") + " |",
           f"| 6 monitor | {mark(r['checks']['monitor'])} | metric mới: {r['monitor']['new'] or 'CHƯA CÓ'}; sáng đèn: "
           f"{[(m['name'], m['stage'], m['base'], m['incident']) for m in r['monitor']['lit']] or 'không'} |", ""]
     if h["available"]:
@@ -378,8 +384,10 @@ def to_markdown(r: dict) -> str:
                 x = rows.get(sid)
                 if not x:
                     return "—"
+                cost = "" if x.get("cost_per_ticket_vnd") is None else \
+                    f"; chi phí {x['cost_per_ticket_vnd']}đ" + (" > làm tay" if x.get("worse_than_manual") else "")
                 return (f"pass {x['pass_rate']}; hoàn sai {x['wrongful_refund_vnd']}; "
-                        f"oan {x['wrongful_carrier_faults']}; PII {x['pii_leaks']}")
+                        f"oan {x['wrongful_carrier_faults']}; PII {x['pii_leaks']}{cost}")
             for kind, sid, label in ids:
                 L.append("| " + label + " | " + " | ".join(cell(st, kind, sid) for st in marks) + " |")
             L.append("")

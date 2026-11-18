@@ -40,6 +40,7 @@ CONFIG = {f"config/{n}": f"config/{n}" for n in ("operating_gates.round1.json", 
 DOCS_REQUIRED = ("form-a-criteria.md", "form-b-evaluation-gates.md", "form-c-incident.md")
 DOCS_OPTIONAL: tuple = ()
 DRAWN_FORM = "form-c-incident.md"          # dòng `Thẻ đã bốc:` nằm ở đầu Phiếu C
+SECTION_EXEMPT = {("form-c-incident.md", "C3"): {"S4"}}   # S4: phần riêng nằm ở C1 + Phiếu B mục B7.6 (bảng đầu mục C3)
 THREE = ("environment_assumption", "reduce_or_prevent", "measure_in_pilot")
 BLANK = {"team": "", "members": [], "incident": "", "decision_v1": "", "decision_v2": "",
          "three_lines": {k: "" for k in THREE}}
@@ -59,6 +60,19 @@ def _form() -> dict:
 def latest_grade(incident: str) -> Path | None:
     reps = sorted(RUNS.glob(f"R-{incident}-grade-*.json"), key=lambda p: p.stat().st_mtime) if RUNS.exists() else []
     return reps[-1] if reps else None
+
+
+def form_sections(text: str) -> dict:
+    """Hash từng mục `## A1 …` / `## B7 …` / `## C12 …` của một phiếu (để biết mục nào còn nguyên mẫu)."""
+    out, code, buf = {}, None, []
+    for line in text.splitlines() + ["## END"]:
+        m = re.match(r"## ([A-C]\d+)\b", line)
+        if line.startswith("## "):
+            if code:
+                out[code] = hashlib.sha256("\n".join(l.rstrip() for l in buf).strip().encode("utf-8")).hexdigest()
+            code, buf = (m.group(1) if m else None), []
+        buf.append(line)
+    return out
 
 
 def first_eval_time(journal: Path) -> str | None:
@@ -202,6 +216,13 @@ def check() -> list[tuple[bool, str, str]]:
         filled = p.exists() and _sha(p) != pristine.get(n)
         add(filled, f"phiếu docs/{n} đã điền", f"điền templates/{n} rồi --collect lại" if p.exists() else
             f"thiếu file: điền templates/{n} rồi chạy --collect")
+        blank = (pristine.get("_sections") or {}).get(n) or {}
+        if filled and blank:
+            now = form_sections(p.read_text(encoding="utf-8"))
+            untouched = [c for c, h in blank.items() if now.get(c) == h and inc not in SECTION_EXEMPT.get((n, c), ())]
+            add(not untouched, f"phiếu docs/{n}: mọi mục đều đã điền" if not untouched else
+                f"phiếu docs/{n}: mục còn nguyên mẫu: {', '.join(untouched)}",
+                f"điền các mục {', '.join(untouched)} trong templates/{n} rồi --collect lại")
     gd = SUB / "docs" / DRAWN_FORM
     if gd.exists():
         m = re.search(r"Thẻ đã bốc:\**\s*`?(S[1-8])\b", gd.read_text(encoding="utf-8"))
