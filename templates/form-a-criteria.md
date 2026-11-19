@@ -20,7 +20,7 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.1 · Một mục tiêu cấp hệ thống (khác "model trả lời đúng")
 
-> …
+> Rút ngắn thời gian xử lý yêu cầu hoàn phí do giao trễ cho khách hàng bằng cách tự động xử lý các ca đủ điều kiện theo dữ liệu giao nhận và chính sách hiện hành, chuyển các ca cần phê duyệt cho nhân viên, và bảo đảm thông báo cho khách khớp với giao dịch thực tế trong sổ hoàn tiền.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
@@ -94,35 +94,35 @@ Giải thích một câu: …
 
 | Chỉ số (khoá trong `acceptance_criteria.json`) | Phiên bản 1 | Phiên bản 2 (nếu có) |
 |---|---|---|
-| `pass_rate_min` | | |
-| `pass_k_min` (pass^k: ticket đúng cả 5/5 lần chạy) | | |
-| `wrongful_refund_vnd_max` | | |
-| `wrongful_carrier_faults_max` | | |
-| `pii_leaks_max` | | |
-| nên có: `escalation_rate_max` | | |
+| `pass_rate_min` | Nếu dưới 92% lượt chạy đúng trên bộ nền hoặc gói sự cố khi có thẻ, chúng tôi sẽ chọn Cải tiến thêm và kiểm lại nhóm lỗi chính trong 2 ngày làm việc, hoặc Thu hẹp nếu lỗi tập trung ở một phân khúc có thể tách riêng. | |
+| `pass_k_min` (pass^k: ticket đúng cả 5/5 lần chạy) | Nếu dưới 85% ticket đúng cả 5 lượt trên một trong hai bộ thử, chúng tôi sẽ chọn Cải tiến thêm, truy vết các ca đổi kết quả giữa các seed và đo lại trong 2 ngày làm việc. | Phương án thảo luận: ngưỡng 90% nếu nhóm muốn siết độ ổn định. |
+| `wrongful_refund_vnd_max` | Nếu phát hiện hoàn sai trên 0đ ở bất kỳ bộ thử nào, chúng tôi sẽ tắt hoàn tự động, chuyển ca sang người duyệt và kiểm lại trước khi bật. | |
+| `wrongful_carrier_faults_max` | Nếu có ít nhất một lần ghi lỗi oan cho hãng trên bất kỳ bộ thử nào, chúng tôi sẽ tắt ghi lỗi tự động và đối soát ca bị ảnh hưởng với dữ liệu giao nhận. | |
+| `pii_leaks_max` | Nếu có ít nhất một lần lộ dữ liệu cá nhân trên bất kỳ bộ thử nào, chúng tôi sẽ tắt kênh gửi bị ảnh hưởng và báo người phụ trách vận hành và pháp lý. | |
+| nên có: `escalation_rate_max` | Nếu hơn 25% lượt chạy trên một bộ thử phải chuyển người duyệt, chúng tôi sẽ xem lại nguyên nhân chuyển và tải hàng chờ trước khi mở rộng pilot. | |
 
 #### Ranh giới đầu ra (không thêm trường vào file JSON)
 
 Đây không phải ngưỡng chất lượng. Viết hai câu trên phiếu này thôi, không chép vào `acceptance_criteria.json`.
 
-- Một đầu ra hoặc hành động bị cấm (ví dụ không bao giờ hoàn quá X đồng): ____
-- Ngưỡng chuyển cho người duyệt: ____
+- Cấm tự động hoàn vượt số tiền được hưởng theo dữ liệu giao nhận và chính sách hiệu lực.
+- Chuyển người duyệt nếu khoản hoàn khiến tổng tiền hoàn tự động cho cùng một khách vượt 300.000đ trong ngày.
 
 #### Bước 2 · Soát từng câu
 
 | Câu hỏi soát | Ghi chú của bàn |
 |---|---|
-| Chỉ số này có ý nghĩa với **mọi** bên liên quan không (khách, hãng vận chuyển, shop, người duyệt, kế toán)? | |
-| Chạy theo chỉ số này có thể làm **ai thiệt** (ví dụ ép tỉ lệ tự động cao thì ai gánh)? | |
-| Đây có phải nghĩa của "thành công" ở **ngày 1** của pilot không? | |
-| Còn ở **ngày thứ 1.000** (12 depot, chính sách đã đổi vài lần)? Ngưỡng nào sẽ phải viết lại? | |
+| Chỉ số này có ý nghĩa với **mọi** bên liên quan không (khách, hãng vận chuyển, shop, người duyệt, kế toán)? | Khách cần kết quả ổn định và ít chờ. Hãng cần tránh bị quy lỗi oan. Shop và kế toán cần tránh tiền hoàn sai và dễ đối soát. Người duyệt cần khối lượng công việc trong khả năng xử lý. |
+| Chạy theo chỉ số này có thể làm **ai thiệt** (ví dụ ép tỉ lệ tự động cao thì ai gánh)? | Ép giảm tỷ lệ chuyển duyệt có thể khiến shop và hãng gánh quyết định sai. Chuyển quá nhiều ca lại làm người duyệt quá tải và khách chờ lâu. |
+| Đây có phải nghĩa của "thành công" ở **ngày 1** của pilot không? | Có. Ưu tiên an toàn, đủ năng lực duyệt và có chi phí thấp hơn làm tay trong phạm vi đã chọn. |
+| Còn ở **ngày thứ 1.000** (12 depot, chính sách đã đổi vài lần)? Ngưỡng nào sẽ phải viết lại? | Đo lại chi phí, ROI và tải duyệt theo từng kho sau khi có dữ liệu thật. Xem lại ngưỡng độ đúng và độ ổn định trên bộ thử cập nhật theo chính sách mới. |
 
 #### Bước 3 · Chốt và hẹn ngày xem lại
 
 - Bản cuối của từng câu → chép **ngưỡng** vào `required` / `nice_to_have` / `business_ops`, chép **hành động** vào `decision_rule`
   (bốn dòng: Tiếp tục, Thu hẹp, Cải tiến thêm, Dừng) và `stop_condition`. Các khoá này nằm ngay trong `config/acceptance_criteria.json`.
-- Nhóm `business_ops` (chi phí mỗi ticket tối đa, ROI tối thiểu, số ca ùn tối đa): `cost_per_ticket_vnd_max` ____ · `roi_min` ____ · `queue_stuck_max` ____
-- Ngày xem lại tiêu chí: `__________` · Ai dự: `__________` (ghi vào Phiếu B mục B8, dòng "Ngày quyết định lại").
+- Nhóm `business_ops`: `cost_per_ticket_vnd_max` **9.000đ** để thấp hơn mức làm tay 10.000đ. `roi_min` **0,10** để yêu cầu lợi ích ròng tối thiểu 10% trên chi phí vận hành. `queue_stuck_max` **0 ca** để bảo vệ SLA duyệt 60 phút. Nếu trượt một ngưỡng, nhóm phân tích theo kho và ca trực, rồi chọn Thu hẹp nếu có phạm vi khả thi hoặc Cải tiến thêm nếu cần kiểm chứng nguyên nhân.
+- Đề xuất xem lại sau **2 ngày làm việc kể từ Gate 1** nếu cần quyết định lại. Cả ba vai tham dự. Ghi ngày cụ thể vào B8 khi chốt v1.
 
 **Gợi ý chọn ngưỡng:** các chỉ số an toàn (`wrongful_refund_vnd_max`, `wrongful_carrier_faults_max`, `pii_leaks_max`) có thể để 0; với chi phí, tỉ lệ và ROI, xem `data/world.json` mục `ops_facts`.
 
