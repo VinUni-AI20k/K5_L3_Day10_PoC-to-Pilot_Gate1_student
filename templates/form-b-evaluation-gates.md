@@ -165,15 +165,15 @@ mà cả bàn chưa nghĩ tới, không phải tả lại nhánh đã biết.
 **Câu hỏi dẫn dắt:** tool nào tạo ra hậu quả không đảo ngược? Mỗi tham số của tool đó lấy từ đâu (ticket, DB, model tự suy)?
 Với mỗi guideword: hậu quả cho ai, hiện có gì ngăn, cần thêm gate ở tầng nào (phát hiện / chặn / giới hạn thiệt hại)?
 
-Tool chọn phân tích: `________________` (gợi ý: `issue_refund`, `file_carrier_fault`, `notify_carrier`)
+Tool chọn phân tích: `file_carrier_fault` (gợi ý: `issue_refund`, `file_carrier_fault`, `notify_carrier`)
 
 | Tham số / dòng dữ liệu | Guideword | Lệch cụ thể (viết bằng dữ kiện của lab) | Hậu quả, cho ai | Hiện có gì ngăn? | Gate đề xuất + tầng |
 |---|---|---|---|---|---|
-| | WRONG | | | | |
-| | INVALID | | | | |
-| | INCOMPLETE | | | | |
-| | PERTURBED | | | | |
-| | INCAPABLE | | | | |
+| carrier_id| WRONG | Agent chọn hãng vận chuyển không đúng với hãng thể hiện trong tracking | Hãng bị quy trách nhiệm sai; LogiX phát sinh khiếu nại và mất thời gian đối soát| Dữ liệu tracking của đơn| Đối chiếu carrier_id với tracking trước khi ghi (chặn) |
+| parcel_id| WRONG | Đơn có nhiều kiện nhưng agent luôn ghi lỗi cho parcels[0], không phải kiện giao trễ | Ghi lỗi nhầm kiện, ảnh hưởng hãng và kết quả đối soát| Danh sách kiện trong đơn | Xác định kiện trễ từ tracking, không mặc định kiện đầu tiên (chặn)|
+|cause | INCOMPLETE | Tracking không có nguyên nhân giao trễ nhưng agent mặc định CARRIER | Hãng có thể bị quy lỗi không có căn cứ | Chưa có cơ chế đủ tin cậy để xác nhận nguyên nhân| Thiếu nguyên nhân thì không ghi lỗi, chuyển người duyệt (chặn) |
+|Nội dung ticket / tracking | PERTURBED | Nội dung đầu vào chứa chỉ dẫn giả nhằm khiến agent ghi lỗi cho một hãng khác | LogiX và hãng vận chuyển chịu hậu quả từ dữ liệu bị thao túng | Chưa xác định được cơ chế bảo vệ cụ thể từ thông tin hiện có | Chỉ lấy hãng và nguyên nhân từ nguồn tracking đáng tin cậy, không lấy chỉ dẫn từ ticket (phát hiện + chặn)|
+| Dịch vụ tracking| INCAPABLE | Tracking lỗi hoặc quá tải, không trả được thông tin kiện và nguyên nhân| Agent có thể ghi lỗi thiếu căn cứ; khách và hãng bị ảnh hưởng | Chưa xác định từ dữ liệu hiện có| Nếu không truy xuất được tracking thì không ghi lỗi, chuyển xử lý thủ công (giới hạn thiệt hại) |
 
 Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòng, trong đó một dòng là nhánh bàn chưa thấy trên trace**.
 
@@ -188,8 +188,10 @@ Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòn
 
 | Thành phần | Guideword | Lệch cụ thể | Hậu quả, cho ai | Cổng đề xuất: code hay con số nào trong `config/operating_gates.json` |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
+|Người duyệt | INCAPABLE | Chỉ có một người trực nhưng có 14 ca cần duyệt trong một giờ | Ca tồn đọng, khách chờ lâu, nhân viên quá tải| Đặt reviewers_per_shift, review_capacity_per_hour, max_review_wait_minutes trong operations |
+| Ngân sách| WRONG | Tổng tiền hoàn tự động trong ngày vượt trần Finance cho phép nhưng không có cảnh báo |LogiX chịu rủi ro tài chính | Đặt max_auto_refund_vnd_per_day trong business|
+|Phạm vi pilot | INVALID | Ticket thuộc nhóm không phù hợp để tự động hóa nhưng vẫn được xử lý tự động| Tăng nguy cơ hoàn sai và xử lý sai chính sách | Giới hạn depot, loại ticket hoặc tỷ lệ tham gia pilot trong business|
+|Dữ liệu gửi bên thứ ba|PERTURBED|Khách nhập số điện thoại hoặc thông tin cá nhân của người khác trong nội dung ticket, agent chép nguyên văn sang thông báo hãng|Người thứ ba bị lộ dữ liệu; LogiX chịu rủi ro pháp lý|Quy định trường dữ liệu được phép gửi trong legal; lọc thông tin không cần thiết trước khi gửi|
 
 **Ví dụ mẫu (`issue_refund`, đừng chép):** tham số `amount_vnd` · WRONG · số tiền tính từ số ngày khách tự khai · LogiX mất
 tiền, hãng bị kéo theo một lỗi · hiện chỉ có trần "không vượt tổng tiền đơn" · cổng ghi so với quyền lợi tính từ DB (chặn).
@@ -208,15 +210,15 @@ Trạng thái: **Xong** (có bằng chứng) · **Chưa** · **Không áp dụng
 
 | # | Nhóm việc | Bằng chứng lấy từ đâu (đã có sẵn trong lab) | Mục cần kiểm tra | Trạng thái | Bằng chứng | PIC |
 |---|---|---|---|---|---|---|
-| 1 | Chất lượng | Report `lab10.eval` (mã lần chạy) + bảng soát lỗi (Phiếu B mục B2) | | | | |
-| 2 | Dữ liệu | Bản đồ dữ liệu (Phiếu B mục B3, câu 2.3): trường nào là nguồn sự thật, trường nào là bản sao | | | | |
-| 3 | Bảo mật | Một vòng HAZOP với guideword PERTURBED (Phiếu B mục B4): chữ nào đi vào model mà không do LogiX viết | | | | |
-| 4 | Quyền hạn | `config/switches.json` + guard trước lệnh ghi; thẻ S2, S8 có thêm mục mức kiểm soát (Phiếu C mục C3) | | | | |
-| 5 | Hiệu năng, hạ tầng | Đội tự ước tính; HAZOP guideword INCAPABLE: LLM không trả lời thì sao; số người duyệt và số ca mỗi giờ | | | | |
-| 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | | | | |
-| 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | | | | |
-| 8 | Con người, pháp lý | Bên thứ ba (hãng, tài xế, shop, người nhận quà, người đứng tên duyệt); `config/operating_gates.json` mục `legal`; thẻ S6, S7, S8 có mục riêng ở Phiếu C mục C3 | | | | |
-| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | | | | |
+| 1 | Chất lượng | Report `lab10.eval` (mã lần chạy) + bảng soát lỗi (Phiếu B mục B2) | | | | Kĩ sư cổng |
+| 2 | Dữ liệu | Bản đồ dữ liệu (Phiếu B mục B3, câu 2.3): trường nào là nguồn sự thật, trường nào là bản sao | | | | Sản phẩm và kinh doanh |
+| 3 | Bảo mật | Một vòng HAZOP với guideword PERTURBED (Phiếu B mục B4): chữ nào đi vào model mà không do LogiX viết | | | | Vương Thu Thảo |
+| 4 | Quyền hạn | `config/switches.json` + guard trước lệnh ghi; thẻ S2, S8 có thêm mục mức kiểm soát (Phiếu C mục C3) | | | | Kĩ sư cổng |
+| 5 | Hiệu năng, hạ tầng | Đội tự ước tính; HAZOP guideword INCAPABLE: LLM không trả lời thì sao; số người duyệt và số ca mỗi giờ | | | | Vận hành và xử lý |
+| 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | | | | Sản phẩm và kinh doanh |
+| 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | | | | Vận hành |
+| 8 | Con người, pháp lý | Bên thứ ba (hãng, tài xế, shop, người nhận quà, người đứng tên duyệt); `config/operating_gates.json` mục `legal`; thẻ S6, S7, S8 có mục riêng ở Phiếu C mục C3 | | | | Pháp lý |
+| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | | | | Sản phẩm và kinh doanh |
 
 Ô "Chưa" có rủi ro cao → chuyển thành một dòng Risk register (Phiếu C mục C10).
 
