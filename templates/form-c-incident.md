@@ -249,9 +249,9 @@ Bắt buộc: ít nhất ba dòng, trong đó **một dòng là nhánh bàn chư
 
 ### Câu 3.2 · Một specification mà nếu bị vi phạm thì gây ra tác hại trên thẻ
 
-Kiểm được bằng code hoặc bằng một con số trong report: …
+Kiểm được bằng code hoặc bằng một con số trong report: Với mọi lần xử lý ticket trong bộ S5, tổng chi phí LLM được ghi nhận cho ticket phải **không quá 1.500đ**, kể cả các lần gọi lại và các bước đã chạy trước khi chuyển người duyệt. Chỉ một ticket vượt trần cũng vi phạm specification và phát sinh chi phí ngoài ngân sách Finance đã duyệt.
 
-Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): …
+Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): Trong khối **Kinh doanh và vận hành** của report S5, so dòng **“ticket tốn LLM nhiều nhất”** (`llm_cost_max_per_ticket_vnd`) với trần `llm_cost_ceiling_vnd` là **1.500đ**. Đạt nếu giá trị lớn nhất ≤ 1.500đ. Nếu vượt, dùng `cost_vnd` trong sự kiện `result` của trace để xác định ticket và seed vi phạm.
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
