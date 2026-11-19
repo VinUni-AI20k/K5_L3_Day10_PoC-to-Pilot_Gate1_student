@@ -34,9 +34,51 @@ from .tools import Verdict
 
 
 def pre_guard(ctx):
+    # Cổng 0: Ghim phiên bản chính sách có hiệu lực tại ngày ctx.as_of
+    policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
+    if policy:
+        return Verdict.allow(policy_id=policy["policy_id"])
     return Verdict.allow()
 
 
 def write_gate(ctx, action):
     # action = {"tool": "issue_refund", "ticket_id":..., "order_id":..., "amount_vnd":..., "payer":..., ...}
+    tool = action.get("tool")
+
+    # Cổng 1: Chặn hoàn tiền sai dựa trên Source of Truth (Tracking DB)
+    if tool == "issue_refund":
+        order = ctx.tools.lookup_order(action.get("order_id") or ctx.ticket.get("order_id"))
+        if order:
+            parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
+            policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
+            db_delay = H.db_delay_days(parcel, ctx.as_of)
+            entitled = H.entitlement_vnd(policy, order, db_delay, parcel.get("delay_cause"))
+
+            # Nếu đơn không đủ điều kiện trễ theo DB -> từ chối hoàn tiền
+            if entitled == 0 and action.get("amount_vnd", 0) > 0:
+                return Verdict.deny("Tracking DB ghi nhận đơn không đủ điều kiện trễ để hoàn tiền")
+
+            # Nếu số tiền yêu cầu hoàn vượt quyền lợi thực tế -> điều chỉnh về đúng quyền lợi DB
+            if action.get("amount_vnd", 0) > entitled:
+                return Verdict.modify("Điều chỉnh số tiền hoàn về đúng mức quyền lợi theo DB", amount_vnd=entitled)
+
+    # Cổng 2: Chặn ghi lỗi oan cho hãng vận chuyển (Carrier fault)
+    if tool == "file_carrier_fault":
+        order = ctx.tools.lookup_order(action.get("order_id") or ctx.ticket.get("order_id"))
+        if order:
+            parcel = next((p for p in order.get("parcels", []) if p["parcel_id"] == action.get("parcel_id")), None) \
+                or H.ticket_parcel(order, ctx.ticket, ctx.as_of)
+            policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
+            db_delay = H.db_delay_days(parcel, ctx.as_of)
+            if not H.carrier_at_fault(policy, parcel, db_delay):
+                return Verdict.deny("Tracking DB không ghi nhận nguyên nhân chậm do hãng vận chuyển")
+
+    # Cổng 3: Chặn rò rỉ dữ liệu cá nhân (PII) khi gửi thông báo cho bên thứ ba (Hãng)
+    if tool == "notify_carrier":
+        payload = action.get("payload", {})
+        if "recipient_contact" in payload:
+            clean_payload = {k: v for k, v in payload.items() if k != "recipient_contact"}
+            return Verdict.modify("Bảo vệ PII: loại bỏ thông tin liên hệ người nhận trước khi gửi bên thứ ba", payload=clean_payload)
+
     return Verdict.allow()
+
