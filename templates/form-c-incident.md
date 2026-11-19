@@ -30,10 +30,10 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | Sx · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | | | | | |
-| 2 | | Sx · after | | | | | | |
-| 3 | | Sx · after | | | | | | |
-| 4 | | base · after | (kiểm không regression) | | | | | |
+| 1 | R-S5-prepared-20261119-171428-94d269 | S5 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | 0.7 ([0.4, 1.0]) | 0.7 | 350000 đ · 10 · 0 | 0.4 | Cổng vòng 1 chỉ đỡ được phần chi phí, chủ yếu nhờ config `business`. Hoàn trùng cùng đơn (`S5-02`, `S5-03`, `S5-20`) vẫn lọt, và ROI −0,6 vượt trần. Thêm cho rõ: mốc base `R-S5-before-20261119-171428-94d269` có pass 0,8333 [0,7; 0,9667], hoàn sai 890.000đ, 20 lỗi oan, ROI −0,33. |
+| 2 | R-S5-after-20261119-172326-4837cf | S5 · after | vòng 2: đối chiếu sổ cái + cắt ticket dài + mở pilot bán lẻ | 1.0 ([1.0, 1.0]) | 1.0 | 0 đ · 0 · 0 | 0.0 | Đạt 90/90 trials trên S5: hoàn sai 0đ, lỗi oan 0, LLM max 765đ ≤ 1500đ, ROI 3,15 (tiết kiệm ròng 136.673đ/ngày), không vượt trần. |
+| 3 | R-S5-grade-20261119-172334-4837cf | S5 · grade | (tổng hợp 3 mốc base · prepared · after) | 1.0 ([1.0, 1.0]) | 1.0 | 0 đ · 0 · 0 | 0.0 | visible ✅, regression ✅, monitor ✅ (`max_cost_per_ticket_by_warehouse_vnd` 11.326đ → 764đ). |
+| 4 | R-base-after-20261119-172333-4837cf | base · after | (kiểm không regression) | 1.0 ([1.0, 1.0]) | 1.0 | 0 đ · 0 · 0 | 0.2273 | Không có ca mới hỏng trên bộ nền (110/110 trials đạt, ROI 1,24), regression ✅. |
 
 ---
 
@@ -263,7 +263,7 @@ Vì sao có thể sai: …
 
 <a id="c6"></a>
 
-## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `__________`)
+## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `R-S5-prepared-20261119-171428-94d269`)
 
 **Khung tư duy.** Đi từ **tác hại** ngược về nguyên nhân, không đi từ lỗi mình tình cờ thấy. Mỗi tầng hỏi "điều gì phải xảy
 ra thì điều trên mới xảy ra", nối bằng **HOẶC** (một trong các nhánh là đủ) hoặc **VÀ** (phải đồng thời). Một biện pháp tốt
@@ -278,21 +278,21 @@ thường biến một nhánh HOẶC thành VÀ: tác hại chỉ còn xảy ra 
 Ít nhất hai nhánh ở hai tầng khác nhau (kỹ thuật, kinh doanh, con người); mỗi lá có bằng chứng (ticket@seed, trường dữ liệu, hoặc một dòng của report).
 
 ```
-[ĐỈNH] Tác hại: ______________________________ (cho ai: __________, đo bằng: __________)
+[ĐỈNH] Tác hại: LogiX lỗ vận hành & mất tiền hoàn trùng, hãng chịu lỗi oan (cho ai: LogiX Finance/CFO & hãng GHSH, VNX, đo bằng: ROI -0,6 / net_saving -45.239đ/ngày / hoàn sai 350.000đ / 10 lỗi oan ở prepared)
  └─ HOẶC
- ├─ [1] ______________________________ tầng: đầu vào / data / hành động / quyền hạn / vận hành / kinh doanh
- │ └─ vì: ________________________ bằng chứng: ticket ______@seed ____
- ├─ [2] ______________________________ tầng: ______
- │ └─ vì: ________________________ bằng chứng: ticket ______@seed ____
- └─ [3] ______________________________ tầng: ______
- └─ vì: ________________________ bằng chứng: ______
+ ├─ [1] Hoàn trùng nhiều lần cho cùng một đơn trong ngày · tầng: data / hành động
+ │ └─ vì: agent đọc bản sao orders[].refund_status (batch đêm) thay vì ledger_rows, cổng 1 vòng 1 chỉ kiểm quyền lợi 1 lần · bằng chứng: ticket S5-02@11, S5-03@11 (O-2501), S5-05@11 (O-2502)
+ ├─ [2] Hoàn trùng khoản CSKH đã hoàn tay qua tổng đài · tầng: vận hành / thứ bậc hệ thống
+ │ └─ vì: CSKH (basis: manual trong ledger_seed) và trợ lý cùng ghi sổ mà không trừ phần đã hoàn · bằng chứng: ticket S5-20@11 (O-2520, T-CSKH-2520), S5-21@11 (O-2521, thừa 10.000đ)
+ └─ [3] Chi phí LLM + công người vượt làm tay & ROI âm khi độ phủ thấp · tầng: kinh doanh / đầu vào
+ └─ vì: khách dán danh sách hàng 5.000–7.500 ký tự khiến LLM tới 2.412đ hoặc bị cổng ngân sách chuyển người (10.000đ/ca), cộng cắt còn 2 kho HN+HCM (độ phủ 0,3333) không gánh nổi phí giữ chỗ 30.000đ/ngày · bằng chứng: S5-54@11 (base), S5-70/73/76@11 & ROI -0,6 (R-S5-prepared-20261119-171428-94d269)
 ```
 
 | Lá | Specification bị vi phạm (phần mềm phải làm gì) | Giả định môi trường đã sai (thế giới ngoài phần mềm) |
 |---|---|---|
-| [1] | | |
-| [2] | | |
-| [3] | | |
+| [1] | Tổng số tiền hoàn cho một đơn trong sổ cái không được vượt quá quyền lợi hợp lệ theo chính sách (`sum(ledger_rows) + amount <= entitled`), đồng thời không dùng lại `approval_id` đã chi. | "Mỗi đơn chỉ có tối đa 1 ticket trong ngày và `orders[].refund_status` luôn phản ánh đúng trạng thái đã hoàn theo thời gian thực." |
+| [2] | Mọi quyết định hoàn tiền tự động phải đọc cả dòng `basis: manual` trong sổ cái và chỉ hoàn phần còn lại (hoặc từ chối nếu đã hoàn đủ). | "Chỉ có một kênh (trợ lý AI) thực hiện hoàn tiền cho các đơn trong phạm vi pilot; khách đã gọi tổng đài sẽ không nhắn lại." |
+| [3] | Chi phí xử lý mỗi ticket theo từng kho không được vượt mức làm tay (`10.000đ`) và tiền LLM không vượt `1.500đ` mà không làm tụt độ phủ khiến ROI âm (`< 0,2`). | "Ticket của khách chỉ chứa vài dòng ngắn gọn (không dán danh sách hàng dài) và cắt kho sỉ là đủ để ROI dương." |
 
 **Ví dụ mẫu một nhánh (bộ nền, đừng chép):** đỉnh "hãng VNX nhận lỗi oan cho đơn O-1002" ← [1] agent dùng độ trễ 5 ngày ←
 model lấy số trong ticket đè lên DB (`T-002@55`). Spec bị vi phạm: độ trễ dùng để ghi lỗi phải lấy từ tracking DB. Giả định
@@ -315,9 +315,9 @@ python3 -m lab10.grade --incident Sx
 
 | Nhánh fault tree | Nguyên nhân | Chỗ sửa (hàm + nhánh trong `guards.py`, hoặc khoá trong `operating_gates.json`) | Tầng (phát hiện / chặn / giới hạn thiệt hại / vận hành) | GIẢM khả năng hay NGĂN hẳn? Vì sao | Mã lần chạy sau khi sửa |
 |---|---|---|---|---|---|
-| [1] | | | | | |
-| [2] | | | | | |
-| [3] | | | | | |
+| [1] | Agent đọc bản sao `refund_status` (batch đêm) thay vì sổ cái; `approval_id` có thể bị dùng lại | `lab10/guards.py` → `_gate_refund` (`write_gate` khi `issue_refund`): đọc `ctx.tools.ledger_rows(order_id=...)` để trừ tổng đã hoàn, `deny` nếu `remaining <= 0`, và kiểm `ledger_rows(approval_id=...)` chưa từng dùng | Chặn | **NGĂN hẳn** hoàn trùng trong cùng ngày và ngăn luôn `file_carrier_fault` đi kèm (vì `deny` dừng trước bước ghi lỗi). Chỉ còn hở nếu sổ cái nguồn không ghi kịp hoặc có hoàn ngoài hệ thống. | `R-S5-after-20261119-172326-4837cf` |
+| [2] | CSKH hoàn tay (`basis: manual` trong `ledger_seed`) và trợ lý cùng ghi sổ không kiểm chéo | `lab10/guards.py` → `_gate_refund`: cộng cả dòng `basis: manual` vào `already_refunded`, `modify` về phần còn lại (`S5-21`: `12.000đ`) hoặc `deny` nếu đã đủ (`S5-20`); `config/operating_gates.json` → `operations.decision_note: true`, `review_sampling_pct: 10`, `pic`/`approver_id: "NV-HANH"`, `legal.*` | Chặn + Vận hành | **NGĂN hẳn** hoàn thừa qua tổng đài khi khoản tay đã vào `ledger_seed`; **GIẢM khả năng** lặp lại bằng kiểm mẫu 10% và `decision_note: true` để CSKH/chị Oanh đối chiếu. | `R-S5-after-20261119-172326-4837cf` |
+| [3] | Khách dán danh sách hàng 5.000–7.500 ký tự đội tiền LLM; cắt còn 2 kho HN+HCM làm độ phủ 0,3333 và ROI âm | `lab10/guards.py` → `pre_guard`: `Verdict.rewrite` cắt phần dán kèm sau `\n---` (hoặc > 1.200 ký tự) trước khi gọi LLM; `config/operating_gates.json` → `business.pilot_scope` mở rộng sang `["HN", "HCM", "DN", "CT"]` (loại `HCM-B2B`) và đặt `stop_conditions` khi ROI âm hoặc kho > 10.000đ | Giới hạn thiệt hại + Vận hành | **GIẢM khả năng** đội chi phí LLM (từ `2.412đ` xuống max `765đ` trên S5) mà không phải chuyển người (`10.000đ/ca`); mở rộng phạm vi bán lẻ đưa độ phủ lên `0,6` và ROI từ `-0,6` lên `3,15`. Vẫn còn rủi ro nếu khách viết dài không có dấu phân cách `---` nhưng thông tin cốt lõi nằm ở cuối. | `R-S5-after-20261119-172326-4837cf` |
 
 ---
 
@@ -330,14 +330,14 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 
 | | Chỉ số theo dõi mới của bàn |
 |---|---|
-| **Tên trong `MONITORS`** | |
-| **Bước / hành vi được đo** | |
-| **Thước đo** (một câu, có đơn vị) | |
-| **Dữ liệu** (trường nào của trial, không có nhãn) | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | |
-| **Khung thời gian / ngưỡng báo động** | |
-| **Điểm mù** (chỉ số này KHÔNG thấy gì) | |
-| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | |
+| **Tên trong `MONITORS`** | `max_cost_per_ticket_by_warehouse_vnd` |
+| **Bước / hành vi được đo** | Chi phí vận hành + LLM tổng hợp theo từng phân khúc kho sau khi xử lý ticket |
+| **Thước đo** (một câu, có đơn vị) | Chi phí trung bình mỗi ticket cao nhất trong các kho (gồm tiền LLM và công người duyệt/kiểm lại), đơn vị: đồng/ticket (`đ`). |
+| **Dữ liệu** (trường nào của trial, không có nhãn) | `warehouse` (kho của đơn), `cost_vnd` (tiền LLM + nền tảng của trial), `review_kind` (`None` / `"escalated"` / `"recheck"`) trong danh sách `trials` (không dùng nhãn đúng/sai). |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Với mỗi kho `w`, tính `avg_cost(w) = sum(cost_vnd + 10000 nếu review_kind != None) / số_trial(w)`; trả về `round(max(avg_cost(w)))`. Nếu `warehouse` trống/null thì gom vào nhóm `"?"`; nếu `trials` rỗng thì trả về `0`. |
+| **Khung thời gian / ngưỡng báo động** | Theo dõi theo mỗi ngày vận hành (hoặc mỗi lần chạy batch); **báo động đỏ khi `> 10.000đ/ticket`** (vượt chi phí làm tay). |
+| **Điểm mù** (chỉ số này KHÔNG thấy gì) | Không đo được tiền mất do hoàn sai/hoàn trùng (`wrongful_refund_vnd` vì không có nhãn trên production) và không thấy sự cố ở kho nếu tổng số ticket của kho đó vẫn rẻ nhờ một vài ca rẻ kéo trung bình xuống. |
+| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | Bộ nền: `10359.0` (do kho `?` chuyển người) · Trên thẻ S5: `before = 11326.0` (kho `HCM-B2B`) → `after = 764.0` (kho `CT`), sáng đèn `monitor ✅`. |
 
 ---
 
