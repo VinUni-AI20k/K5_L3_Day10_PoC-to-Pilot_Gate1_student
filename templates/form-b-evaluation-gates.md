@@ -277,9 +277,9 @@ python3 -m unittest discover -s tests
 
 | # | Cổng (hàm và nhánh, ví dụ `write_gate` khi `tool == "issue_refund"`) | Ứng với dòng nào ở B6 / B4 | Chặn điều gì, dựa vào nguồn sự thật nào | Mã lần chạy `base · after` | Ca đang đúng nào bị hỏng? (phải là "không") |
 |---|---|---|---|---|---|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
+| 1 | `write_gate` khi `tool == "issue_refund"` | B4 HAZOP (WRONG trên `amount_vnd`), B6 Kỹ thuật (Model tin ngày khách khai đè lên DB) | Chặn hoàn sai khi DB không trễ (deny) hoặc điều chỉnh tiền hoàn về đúng quyền lợi (modify), dựa vào `orders` + `tracking DB` và `policy` | R-base-after-20261119-151846-92bcb1 | Không (110/110 ca đạt, pass_rate 1.0) |
+| 2 | `write_gate` khi `tool == "file_carrier_fault"` | B4 HAZOP (WRONG trên `carrier_id` / `delay_days`), B6 Pháp lý (Phạt oan hãng đối tác) | Chặn phạt hãng khi tracking DB không có nguyên nhân trễ do hãng hoặc chưa quá hạn trễ tối thiểu, dựa vào `parcels[].delay_cause` và `policy` | R-base-after-20261119-151846-92bcb1 | Không (0 lỗi oan) |
+| 3 | `write_gate` khi `tool == "notify_carrier"` và `pre_guard` ghim policy | B4 HAZOP (PERTURBED trên payload notify), B6 Pháp lý (Rò rỉ PII người nhận quà sang bên thứ ba) | Tự động bóc tách và loại bỏ trường dữ liệu cá nhân (`recipient_contact`) trước khi gửi thông báo sang hãng; ghim đúng policy hiệu lực | R-base-after-20261119-151846-92bcb1 | Không (pii_leaks = 0) |
 
 ### B7.2 · Câu 2.7 · Hai bước tránh rò rỉ dữ liệu
 
