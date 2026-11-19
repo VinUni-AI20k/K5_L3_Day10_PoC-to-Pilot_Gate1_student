@@ -5,7 +5,7 @@
 - Tên nhóm (`TenNhom`, không dấu, không khoảng trắng): HiLab
 - Lớp: `L3B`
 - Repo của bàn: `K5-L3B-DAY10-HiLab-PoCtoPilotGate1`
-- Thẻ sự cố đã bốc (S1–S8):
+- Thẻ sự cố đã bốc (S1–S8): `S1`
 
 ## Thành viên
 
@@ -28,19 +28,19 @@ Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi ti�
 
 ### Phần việc phụ trách
 
-Vai Vận hành và pháp lý (Vai 4): Phụ trách câu 1.2, 1.4 (Phiếu A mục A1, A2); câu 2.4, 2.5, 2.10 (Phiếu B mục B4 HAZOP vòng 1, B5 Checklist go-live 9 nhóm việc, B6 Pre-mortem, B7.5 Runbook phần 1–3, B7.6 Giờ cao điểm); cấu hình `operations` và `legal` trong `config/operating_gates.json`.
+Vai Vận hành và pháp lý (Vai 4): Phụ trách câu 1.2, 1.4 (Phiếu A mục A1, A2); câu 2.4, 2.5, 2.10 (Phiếu B mục B4 HAZOP vòng 1, B5 Checklist go-live 9 nhóm việc, B6 Pre-mortem, B7.5 Runbook phần 1–3, B7.6 Giờ cao điểm); câu 3.0, 3.1, 3.3, 3.4, 3.7 trên thẻ sự cố `S1` (Phiếu C mục C1 đối chiếu Pre-mortem, C3.5 mở lại bản đồ dữ liệu các trường của `parcel`, C4 HAZOP của thẻ `S1`, C5 câu 3.3 giả định môi trường, C6 & C9 Fault tree trước và sau khi sửa, C10 Risk register, C11 cập nhật Checklist & Runbook phần 4–5); cấu hình `operations` và `legal` trong `config/operating_gates.json`.
 
 ### Đóng góp cụ thể
 
 - Xác định mục tiêu vận hành & đối soát từ góc nhìn chị Oanh (`NV-OANH`) và chị Hạnh (`NV-HANH`), thiết kế telemetry production không nhãn theo dõi rò rỉ PII và lỗi ghi oan cho bên thứ ba.
-- Phân tích HAZOP mở rộng (kỹ thuật & ngoài kỹ thuật), lập Checklist go-live 9 nhóm việc gắn PIC cụ thể, thiết lập cổng `operations` (`pic: "NV-TUNG"`, `approver_id: "NV-HANH"`, SLA 60 phút, điều kiện dừng) và `legal` (`pii_fields_blocked_to_third_party`, `carrier_fault_requires_recorded_cause`) trong `config/operating_gates.json`.
-- Xây dựng Runbook vận hành phần 1–3 và phương án Giờ cao điểm đồng bộ với các thông số cổng kinh doanh, vận hành và pháp lý.
+- Phân tích HAZOP mở rộng (kỹ thuật & ngoài kỹ thuật), lập Checklist go-live 9 nhóm việc gắn PIC cụ thể, thiết lập cổng `operations` (`pic: "NV-TUNG"`, `approver_id: "NV-HANH"`, SLA 60 phút, điều kiện dừng) và `legal` (`pii_fields_blocked_to_third_party`, `carrier_fault_requires_recorded_cause: true`) trong `config/operating_gates.json`.
+- Phân tích sự cố thẻ `S1` (Hãng Giao Hàng Sông Hồng `GHSH` khiếu nại bị ghi lỗi oan): mở lại bản đồ dữ liệu `parcel` (`delivered_date == null` khi `status == "DELIVERED"` ở `S1-20`, `S1-21`; `model_override` hai chiều ở `S1-01..S1-07`; vượt trần `max_auto_strikes_per_carrier_per_day = 2` ở loạt `S1-40..S1-43`), hoàn thiện HAZOP thẻ `S1` (C4), Fault tree trước/sau (C6, C9), Risk register (C10) và Runbook phần 4–5 (C11).
 
 ### Bằng chứng
 
-- Mã commit: `4c4671b` (Giai đoạn 1 - PR #2) trên nhánh `dat_vanhanh&phaply` / `main`.
+- Mã commit: `4c4671b` (PR #2), `ca6898b` (PR #6) và commit cập nhật thẻ `S1` trên nhánh `dat_vanhanh&phaply` / `main`.
 - Mã lần chạy: `R-base-before-20261119-150226-bde05c`, `R-base-after-20261119-150553-08c90d`, `R-base-prepared-20261119-150714-08c90d`.
-- Các mục phiếu: Phiếu A (`A1`, `A2`), Phiếu B (`B4`, `B5`, `B6`, `B7.5`, `B7.6`).
+- Các mục phiếu: Phiếu A (`A1`, `A2`), Phiếu B (`B4`, `B5`, `B6`, `B7.5`, `B7.6`), Phiếu C (`C1`, `C3.5`, `C4`, `C5 - câu 3.3`, `C6`, `C9`, `C10`, `C11`).
 
 ### Exit ticket
 
