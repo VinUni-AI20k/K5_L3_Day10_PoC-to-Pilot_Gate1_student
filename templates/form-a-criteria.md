@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
+| **Bước / hành vi được đo** | Bước ghi lỗi cho hãng vận chuyển (`file_carrier_fault`) khi trợ lý quy trách nhiệm giao trễ cho đối tác vận chuyển. | |
+| **Thước đo** (một câu, có đơn vị) | Tỉ lệ (%) lệnh `file_carrier_fault` hợp lệ — ghi đúng cặp `(carrier_id, parcel_id)`, đủ độ trễ thực tế từ tracking và có nguyên nhân (`delay_cause`) thuộc danh sách chịu phạt của chính sách đang hiệu lực. | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | Sự kiện `tool == "file_carrier_fault"` (trường `order_id`, `parcel_id`, `carrier_id`, `delay_days`) trong `runs/<mã lần chạy>/traces/*.json` trên bộ nền (22 ticket × 5 seed = 110 trials), đối chiếu nguồn sự thật `orders[].parcels` và `policies` (theo `as_of`) trong `data/world.json`, cùng nhãn chuẩn `label.faults` trong `data/tickets.jsonl` do đội vận hành/QA gán nhãn theo quy định đối soát hãng. | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | `Số lệnh file_carrier_fault khớp đồng thời [carrier_id, parcel_id] với label.faults và thỏa H.carrier_at_fault(policy_hiệu_lực, parcel, db_delay_days) == True` chia cho `Tổng số lệnh file_carrier_fault phát sinh` (× 100%). Ca không phát sinh `file_carrier_fault` loại khỏi mẫu số và đếm riêng; nếu mẫu số = 0 ghi `N/A`; nếu 1 ticket gọi ghi lỗi lặp lại, mỗi lệnh đều vào mẫu số và bản trùng tính là không hợp lệ. | |
 | **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | (1) Không phát hiện lỗi bỏ sót (False Negative): hãng thực sự có lỗi theo tracking nhưng trợ lý không ghi lỗi; (2) Không thấy trường hợp dữ liệu gốc (`delivered_date`, `delay_cause`) trong tracking DB bị điểm phát quét sót hoặc nhập sai; (3) Không đo việc `notify_carrier` sau đó có gửi thông báo cho hãng hay làm lộ PII không. | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
