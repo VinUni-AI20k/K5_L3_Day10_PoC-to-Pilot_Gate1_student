@@ -29,7 +29,7 @@ Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đ
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | base · base | (baseline, chưa có cổng) | | | | | |
+| 1 | R-base-before-20261119-155049-b45eeb | base · base | (baseline, chưa có cổng) | 0.9909 ([0.9727, 1.0]) | 0.9545 | 20000 đ · 1 · 0 | 0.2273 | Chưa đạt 2 ngưỡng an toàn bắt buộc (hoàn sai 20.000đ > 0, lỗi hãng oan 1 > 0 tại T-002@55) dù pass_rate/pass_k và vận hành đạt. |
 | 2 | | base · after | (cổng vòng 1, thử trước khi chốt) | | | | | |
 | 3 | | base · prepared | (cổng vòng 1 đã chốt) | | | | | |
 | 4 | | | | | | | | |
@@ -45,18 +45,18 @@ python3 -m lab10.eval --suite base --stage base --note "baseline"
 python3 -m lab10.gate --run runs/<mã lần chạy>/report.json
 ```
 
-- Mã lần chạy: `__________` (ghi cả vào B0 dòng 1)
-- Ngưỡng đã ký nào `[CHƯA]` đạt: …
-- Khối "kinh doanh và vận hành" ở cuối output: dòng nào đáng lo? …
-- Khối "theo kho và hãng": kho hoặc hãng nào có số xấu nhất? …
+- Mã lần chạy: `R-base-before-20261119-155049-b45eeb` (ghi cả vào B0 dòng 1)
+- Ngưỡng đã ký nào `[CHƯA]` đạt: `wrongful_refund_vnd` (yêu cầu ≤ 0, thực tế 20000 đ) và `wrongful_carrier_faults` (yêu cầu ≤ 0, thực tế 1).
+- Khối "kinh doanh và vận hành" ở cuối output: dòng nào đáng lo? Phân khúc kho `?` (không rõ kho) có `cost_per_ticket_vnd = 10359` đ > mức làm tay `10000` đ (`worse_than_manual: true`, `review_rate = 1.0`), `team_daily_cap_vnd` đang là `null` (chưa có trần hoàn ngày), và `wrongful_refund_worst_day_vnd = 20000` đ.
+- Khối "theo kho và hãng": kho hoặc hãng nào có số xấu nhất? Theo kho: **HCM** (`pass_rate = 0.96`, `wrongful_refund_vnd = 20000`, `wrongful_carrier_faults = 1`) và kho **`?`** (`cost_per_ticket_vnd = 10359` đ, đắt hơn làm tay). Theo hãng: **VNX** (`pass_rate = 0.9714`, `wrongful_refund_vnd = 20000`, `wrongful_carrier_faults = 1`).
 
 **Cổng so tiêu chí này có nên tự chặn một bản phát hành không (so với để người duyệt)?**
 
 | Lý lẽ ủng hộ tự chặn | Lý lẽ phản đối |
 |---|---|
-| | |
+| Ngăn ngay bản phát hành còn vi phạm ngưỡng an toàn bắt buộc (`wrongful_refund_vnd > 0`, `wrongful_carrier_faults > 0`), tránh gây thiệt hại tài chính/pháp lý với hãng khi ra pilot; giữ tính khách quan theo tiêu chí đã ký trước khi đo. | Chỉ số tổng hợp chưa thấy được ngữ cảnh: chỉ 1 ca lỗi (`T-002@55`) trên 110 lần chạy khiến cả 2 ngưỡng an toàn `≤ 0` bị trượt dù `pass_rate = 0.9909` và `ROI = 1.34` đều đạt; cổng tự động không biết cân nhắc phương án **Thu hẹp** phạm vi hay dựng thêm cổng phòng ngừa. |
 
-Khuyến nghị (khoanh một): **tự chặn · người duyệt · kết hợp**. Vì: …
+Khuyến nghị (khoanh một): **kết hợp** *(tự chặn · người duyệt · **kết hợp**)*. Vì: dùng cổng tự động chặn cứng các vi phạm an toàn bắt buộc chưa có biện pháp kiểm soát (`pii_leaks > 0`, hoàn sai/lỗi hãng oan vượt trần), còn các chỉ số kinh doanh/vận hành và quyết định **Thu hẹp** hay **Cải tiến thêm** cần người duyệt đọc kèm phân tích theo kho/hãng để chốt Gate 1.
 
 ---
 
