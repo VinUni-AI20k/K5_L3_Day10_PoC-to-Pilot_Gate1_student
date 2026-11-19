@@ -1,0 +1,4 @@
+# Giữ LF cho mọi file văn bản.
+# Lab 10 kiểm hash byte từng file (bị khoá, tiêu chí đã ký, bản chốt vòng 1).
+# Git trên Windows mặc định core.autocrlf=true sẽ đổi LF -> CRLF khi checkout, làm sai hash.
+* text=auto eol=lf

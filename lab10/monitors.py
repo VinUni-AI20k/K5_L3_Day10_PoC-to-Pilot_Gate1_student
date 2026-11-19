@@ -19,7 +19,25 @@ def escalation_rate(trials):
     return sum(t["status"] == "escalated" for t in trials) / max(1, len(trials))
 
 
+def fail_open_rate(trials):
+    """Tỉ lệ trial mà LLM policy_check nghẽn và agent rơi vào fail_open (tự quyết khi không kiểm được policy).
+
+    Sự cố S4 (LLM trả 429 giờ cao điểm) làm chỉ số này sáng đèn; theo dõi nó để biết trợ lý có đang
+    duyệt khi chưa kiểm được chính sách hay không.
+    """
+    hits = sum(any(e.get("type") == "llm_fallback" and e.get("mode") == "fail_open" for e in t["events"])
+               for t in trials)
+    return hits / max(1, len(trials))
+
+
+def queue_stuck_rate(trials):
+    """Tỉ lệ trial bị ùn ở hàng chờ người duyệt (chờ quá SLA hoặc hết ca chưa tới lượt)."""
+    return sum(bool(t.get("queue_stuck")) for t in trials) / max(1, len(trials))
+
+
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
+    "fail_open_rate": fail_open_rate,        # metric mới: bắt LLM nghẽn -> fail_open (kỹ thuật, S4)
+    "queue_stuck_rate": queue_stuck_rate,    # metric mới: bắt hàng chờ ùn (vận hành, S4)
 }
 STARTER_MONITORS = ("escalation_rate",)

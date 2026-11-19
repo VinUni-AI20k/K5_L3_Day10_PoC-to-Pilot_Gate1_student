@@ -1,12 +1,16 @@
 {
-  "team": "",
-  "members": [],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "team": "K5-L3B-DAY10-Simple-PoCtoPilotGate1",
+  "members": [
+    "NgoNgocHai-2A202603939",
+    "TranMinhDuc-2A202603977",
+    "LeThiLy-2A202603989"
+  ],
+  "incident": "S4",
+  "decision_v1": "Tiếp tục",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Pilot giả định Ops có đủ người duyệt đã đào tạo và gọi được người dự phòng kịp giờ cao điểm, và Finance công bố đúng ngân sách 300.000đ/ngày sale trước ca; đây có thể sai vì S4 có 30/41 ticket đến trong một giờ.",
+    "reduce_or_prevent": "Cổng vòng 1 NGĂN hẳn hoàn sai, lỗi hãng oan và PII (về 0 trên bộ nền và S4); sửa vòng 2 (trần hoàn 300.000đ + 2 người trực · 12 ca/giờ) NGĂN hẳn phần vượt ngân sách (422.000đ→292.000đ) và hết ùn (5→0 ca, 82'→15'); các cổng chỉ GIẢM (không ngăn hẳn) rủi ro quá tải thật ngoài mô phỏng.",
+    "measure_in_pilot": "Cần đo lại trong pilot thật: ticket đến theo giờ, thời gian chờ và số ca ùn, tỉ lệ chuyển người, tổng hoàn tự động so với cap Finance, lỗi hãng/PII, chi phí mỗi ticket và ROI theo kho trước Bước đánh giá 2."
   }
 }
