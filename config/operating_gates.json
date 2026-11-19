@@ -7,18 +7,25 @@
     "roi_min": null
   },
   "operations": {
-    "pic": "",
-    "approver_id": "",
+    "pic": "NV-TUNG",
+    "approver_id": "NV-HANH",
     "reviewers_on_shift": 1,
-    "review_capacity_per_hour": null,
-    "max_queue_wait_minutes": null,
-    "stop_conditions": [],
-    "alert_channel": "",
+    "review_capacity_per_hour": 6,
+    "max_queue_wait_minutes": 60,
+    "stop_conditions": [
+      "Khi có từ 1 lỗi ghi oan cho hãng vận chuyển hoặc 1 ca lộ dữ liệu cá nhân (PII) sang bên thứ ba thì tắt ngay công tắc file_carrier_fault / notify_carrier",
+      "Khi có từ 1 khoản hoàn tiền sai (wrongful_refund_vnd > 0) hoặc dùng mã phê duyệt không hợp lệ thì tắt công tắc issue_refund và chuyển duyệt tay",
+      "Khi có ca chờ người duyệt vượt quá SLA 60 phút (queue_stuck > 0) hoặc thời gian chờ tối đa vượt ngưỡng thì gọi thêm người trực hoặc thu hẹp phạm vi pilot_scope"
+    ],
+    "alert_channel": "#logix-pilot-alerts",
     "decision_note": false,
     "review_sampling_pct": 0
   },
   "legal": {
-    "pii_fields_blocked_to_third_party": [],
-    "carrier_fault_requires_recorded_cause": false
+    "pii_fields_blocked_to_third_party": [
+      "recipient_contact",
+      "customer_note"
+    ],
+    "carrier_fault_requires_recorded_cause": true
   }
 }
