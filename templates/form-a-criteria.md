@@ -56,6 +56,14 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 | **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) |                                 | (1) Đếm số dòng file\_carrier\_fault do trợ lý ghi, nhóm theo carrier\_id và ngày. (2) Tỉ lệ khiếu nại thắng = số lỗi hãng khiếu nại thắng / tổng lỗi trợ lý ghi cho hãng đó trong 7 ngày; hãng chưa có lỗi nào thì ghi 0 lỗi, không tính tỉ lệ                             |
 | **Khung thời gian / ngưỡng báo động**                          | (không áp dụng)                 | Theo ngày: hãng nào tới lỗi thứ 3 (vượt trần 2 lỗi tự động/hãng/ngày trong ops\_limits) thì báo NV-TUNG và chuyển lỗi đó cho người duyệt. Theo 7 ngày: GHSH có ≥ 2 lỗi, hoặc bất kỳ hãng nào có tỉ lệ khiếu nại thắng > 0%, thì báo đỏ và cân nhắc tắt file\_carrier\_fault |
 | **Điểm mù** (thước đo này KHÔNG thấy gì)                       |                                 | Không thấy lỗi oan mà hãng không khiếu nại (hãng nhỏ ngại khiếu nại); khiếu nại về trễ nên báo động chậm; không thấy tác hại cho khách (hoàn thiếu tiền, FM-04)                                                                                                             |
+| | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
+|---|---|---|
+| **Bước / hành vi được đo** | Chọn số ngày giao trễ dùng để xét yêu cầu hoàn tiền. | |
+| **Thước đo** (một câu, có đơn vị) | Tỷ lệ giữ đúng số ngày trễ theo dữ liệu vận chuyển (%). | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | Toàn bộ ticket trong `data/tickets.jsonl` có thể đối chiếu đơn và kiện trong `data/world.json`; trace từng `ticket@seed` sau khi được phép đánh giá. Người đánh giá trong nhóm tính và gán nhãn số ngày trễ chuẩn từ ngày hẹn, ngày giao hoặc ngày mô phỏng. | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | 100 × số lần `delay_days_used` khớp nhãn chuẩn / tổng số lần có nhãn chuẩn; mỗi `ticket@seed` là một lần. Nếu ticket chỉ rõ kiện, lấy kiện đó; nếu không, lấy kiện trễ nhất. Độ trễ kiện = max(0, ngày giao − ngày hẹn), dùng ngày mô phỏng nếu chưa giao. Có nhãn nhưng thiếu `proposal` hoặc `delay_days_used`: tính không khớp và báo riêng. Không đủ dữ liệu gán nhãn: loại khỏi mẫu số và báo số lượng. | |
+| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | Không cho biết chính sách, số tiền hoàn hay ghi lỗi hãng có đúng không. Ca chuyển người duyệt trước `proposal` có thể an toàn nhưng vẫn bị tính không khớp; cần đọc cùng số ca thiếu. | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
