@@ -1,6 +1,6 @@
 # Phiếu A · Tiêu chí và cách đo · Khối 1 (phút 15–65)
 
-**Bàn:** ______ · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
+**Bàn:** Teris · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
 
 Điền phiếu này **trước khi chạy trợ lý lần nào**. Viết xong thì chép ngưỡng sang `config/acceptance_criteria.json`, ký ở phút 60–65,
 rồi mới chạy đánh giá. Khối 1 không sửa code.
@@ -19,6 +19,7 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 ## A1 · Mục tiêu (phút 15–20)
 
 ### Câu 1.1 · Một mục tiêu cấp hệ thống (khác "model trả lời đúng")
+- Hệ thống trợ lý hoàn tiền LogiX-VN phải xử lý ticket giao trễ nhanh và ít tốn hơn làm tay, đồng thời chỉ tạo các lệnh hoàn tiền, ghi sổ và ghi lỗi hãng vận chuyển chính xác, không phát sinh rò rỉ dữ liệu hoặc thiệt hại cho khách, shop và hãng vận chuyển.
 
 > …
 
