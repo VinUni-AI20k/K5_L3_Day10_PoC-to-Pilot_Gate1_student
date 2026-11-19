@@ -210,14 +210,14 @@ Trạng thái: **Xong** (có bằng chứng) · **Chưa** · **Không áp dụng
 | # | Nhóm việc | Bằng chứng lấy từ đâu (đã có sẵn trong lab) | Mục cần kiểm tra | Trạng thái | Bằng chứng | PIC |
 |---|---|---|---|---|---|---|
 | 1 | Chất lượng | Report `lab10.eval` (mã lần chạy) + bảng soát lỗi (Phiếu B mục B2) | | | | Kĩ sư cổng |
-| 2 | Dữ liệu | Bản đồ dữ liệu (Phiếu B mục B3, câu 2.3): trường nào là nguồn sự thật, trường nào là bản sao | | | | Sản phẩm và kinh doanh |
+| 2 | Dữ liệu | Bản đồ dữ liệu (Phiếu B mục B3, câu 2.3): trường nào là nguồn sự thật, trường nào là bản sao | Xác định nguồn dữ liệu cho ngày hẹn, ngày giao, nguyên nhân trễ và mã hãng theo từng kiện. Đối chiếu ngày hiệu lực chính sách với cờ `index_active`. | Xong | Phiếu B mục B3 đã có bản đồ nguồn dữ liệu và ví dụ `REFUND-v4` có hiệu lực ngày 01/12/2026. | Võ Thị Kim Ý |
 | 3 | Bảo mật | Một vòng HAZOP với guideword PERTURBED (Phiếu B mục B4): chữ nào đi vào model mà không do LogiX viết | | | | Vương Thu Thảo |
 | 4 | Quyền hạn | `config/switches.json` + guard trước lệnh ghi; thẻ S2, S8 có thêm mục mức kiểm soát (Phiếu C mục C3) | | | | Kĩ sư cổng |
 | 5 | Hiệu năng, hạ tầng | Đội tự ước tính; HAZOP guideword INCAPABLE: LLM không trả lời thì sao; số người duyệt và số ca mỗi giờ | | | | Vận hành và xử lý |
-| 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | | | | Sản phẩm và kinh doanh |
+| 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | | | | |
 | 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | | | | Vận hành |
 | 8 | Con người, pháp lý | Bên thứ ba (hãng, tài xế, shop, người nhận quà, người đứng tên duyệt); `config/operating_gates.json` mục `legal`; thẻ S6, S7, S8 có mục riêng ở Phiếu C mục C3 | | | | Pháp lý |
-| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | | | | Sản phẩm và kinh doanh |
+| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | | | | Võ Thị Kim Ý |
 
 Ô "Chưa" có rủi ro cao → chuyển thành một dòng Risk register (Phiếu C mục C10).
 
@@ -309,10 +309,10 @@ Mỗi con số kèm một câu lý do, lấy từ `data/world.json` → `ops_lim
 
 | Khoá | Giá trị bàn đặt | Lý do (một câu, có số) |
 |---|---|---|
-| `business.daily_refund_cap_vnd` | | |
-| `business.cost_budget_per_ticket_vnd` | | |
-| `business.pilot_scope` (all / warehouse / percent) | | |
-| `business.roi_min` | | |
+| `business.daily_refund_cap_vnd` | 1.000.000đ/ngày | Dùng 50% ngân sách hoàn tự động 2.000.000đ/ngày của Finance trong giai đoạn pilot để giới hạn số tiền trợ lý có thể tự ghi trong một ngày. |
+| `business.cost_budget_per_ticket_vnd` | 1.500đ tiền LLM/ticket | Đặt ngân sách tiền LLM bằng trần 1.500đ/ticket trong `ops_limits`; đối chiếu chi phí LLM cao nhất trong report vì các khoản phát sinh sau bước đọc có thể làm tổng chi phí vượt ngân sách. |
+| `business.pilot_scope` (all / warehouse / percent) | `warehouse`: `HN`, `HCM` | Chọn hai kho đơn lẻ Hà Nội và TP.HCM để thử đúng phạm vi hai depot và theo dõi tải duyệt theo năng lực giả lập 1 người trực, 6 ca/giờ. |
+| `business.roi_min` | 20% (`0.20`) | Giữ ngưỡng Gate 1 ở 20% để yêu cầu lãi ròng tối thiểu 20% trên chi phí pilot sau khi so với mức làm tay 10.000đ/ticket trong `ops_facts`. |
 
 ### B7.5 · Câu 2.10 · Cổng con người, vận hành, pháp lý + Runbook phần 1–3
 
