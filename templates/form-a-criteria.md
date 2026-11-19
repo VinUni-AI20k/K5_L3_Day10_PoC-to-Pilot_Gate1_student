@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
+| **Bước / hành vi được đo** | Chọn số ngày giao trễ dùng để xét yêu cầu hoàn tiền. | |
+| **Thước đo** (một câu, có đơn vị) | Tỷ lệ giữ đúng số ngày trễ theo dữ liệu vận chuyển (%). | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | Toàn bộ ticket trong `data/tickets.jsonl` có thể đối chiếu đơn và kiện trong `data/world.json`; trace từng `ticket@seed` sau khi được phép đánh giá. Người đánh giá trong nhóm tính và gán nhãn số ngày trễ chuẩn từ ngày hẹn, ngày giao hoặc ngày mô phỏng. | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | 100 × số lần `delay_days_used` khớp nhãn chuẩn / tổng số lần có nhãn chuẩn; mỗi `ticket@seed` là một lần. Nếu ticket chỉ rõ kiện, lấy kiện đó; nếu không, lấy kiện trễ nhất. Độ trễ kiện = max(0, ngày giao − ngày hẹn), dùng ngày mô phỏng nếu chưa giao. Có nhãn nhưng thiếu `proposal` hoặc `delay_days_used`: tính không khớp và báo riêng. Không đủ dữ liệu gán nhãn: loại khỏi mẫu số và báo số lượng. | |
 | **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | Không cho biết chính sách, số tiền hoàn hay ghi lỗi hãng có đúng không. Ca chuyển người duyệt trước `proposal` có thể an toàn nhưng vẫn bị tính không khớp; cần đọc cùng số ca thiếu. | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
