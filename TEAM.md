@@ -14,9 +14,9 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; bàn 3 người th
 | STT | Họ và tên | MSSV | Vai | Trưởng nhóm |
 | --: | --------- | ---- | --- | :---------: |
 |   1 | Trần Duy Thành | 2A202603919 | Trưởng nhóm, Sản phẩm và kinh doanh | Có |
-|   2 | Võ Thị Phương Nhung | 2A202603918 | Kỹ sư cổng, code | Không |
-|   3 | Nguyễn Tiến Đạt | 2A202603922 | Kỹ sư cổng, đánh giá và bằng chứng | Không |
-|   4 | Nguyễn Anh Quân | 2A202603950 | Vận hành và pháp lý | Không |
+|   2 | Võ Thị Phương Nhung | 2A202603918 | Kỹ sư cổng, đánh giá và bằng chứng | Không |
+|   3 | Nguyễn Tiến Đạt | 2A202603922 | Vận hành và pháp lý  | Không |
+|   4 | Nguyễn Anh Quân | 2A202603950 | Kỹ sư cổng, code | Không |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
 
