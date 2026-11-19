@@ -386,18 +386,27 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [gate … hỏng]` và ghi:
 
 ```
-[ĐỈNH] ______________________________
+[ĐỈNH] LogiX mất tiền và lỗ vận hành do hoàn trùng, đồng thời chi phí xử lý ticket vượt hiệu quả làm tay
  └─ HOẶC
- ├─ [1] ______________ VÀ [gate ______ hỏng]
- ├─ [2] ______________ VÀ [gate ______ hỏng]
- └─ [3] ______________ (còn hở?)
+    ├─ [1] Hoàn trùng nhiều lần cho cùng một đơn trong ngày
+    │      VÀ [gate _gate_refund hỏng]
+    │      Gate không đọc ledger_rows hoặc không kiểm tra tổng tiền đã hoàn
+    │
+    ├─ [2] Hoàn trùng khoản CSKH đã hoàn tay qua tổng đài
+    │      VÀ [gate _gate_refund / decision_note hỏng]
+    │      Gate bỏ qua dòng basis: manual hoặc quy trình đối chiếu không hoạt động
+    │
+    └─ [3] Chi phí LLM + công người vượt chi phí làm tay
+           VÀ [gate pre_guard / business.pilot_scope / stop_conditions hỏng]
+           Gate không cắt đầu vào dài, không giới hạn phạm vi pilot
+           hoặc không dừng khi chi phí vượt ngưỡng
 ```
 
 | Nhánh | Gate (hàm trong `guards.py` / khoá config / metric trong `monitors.py`) | Tầng gate (phát hiện / chặn / giới hạn thiệt hại / vận hành) | Giảm hay ngăn? Vì sao | Nhánh còn hở |
 |---|---|---|---|---|
-| [1] | | | | |
-| [2] | | | | |
-| [3] | | | | |
+| [1] | `write_gate` → `_gate_refund`: đọc `ctx.tools.ledger_rows(order_id=...)`, tính tổng đã hoàn và từ chối nếu `remaining <= 0`; kiểm tra `approval_id` đã sử dụng | Chặn | **NGĂN hẳn** hoàn trùng khi dữ liệu sổ cái đầy đủ và được cập nhật kịp thời; lệnh bị từ chối trước khi ghi lỗi hãng | Sổ cái cập nhật chậm hoặc khoản hoàn được thực hiện ngoài hệ thống |
+| [2] | `_gate_refund`: tính cả dòng `basis: manual`; `operations.decision_note: true`, `review_sampling_pct: 10`, người duyệt `NV-HANH` | Chặn + vận hành | **NGĂN** hoàn thừa khi khoản hoàn tay đã có trong sổ; kiểm mẫu và ghi chú giúp giảm nguy cơ bỏ sót khi đối chiếu | CSKH hoàn ngoài hệ thống hoặc không ghi nhận khoản hoàn vào sổ |
+| [3] | `pre_guard`: cắt nội dung sau `\n---` hoặc giới hạn đầu vào trên 1.200 ký tự; `business.pilot_scope` loại `HCM-B2B`; `stop_conditions` theo ROI và chi phí mỗi kho; theo dõi `max_cost_per_ticket_by_warehouse_vnd` | Giới hạn thiệt hại + vận hành | **GIẢM khả năng** phát sinh chi phí LLM cao và tránh chạy trợ lý ở nhóm không hiệu quả. Report sau sửa ghi nhận tiền LLM tối đa 765đ và chi phí theo kho trên thẻ còn 764đ | Nội dung dài không có dấu phân cách `---` nhưng thông tin quan trọng nằm ở cuối; chi phí có thể tăng khi lưu lượng hoặc tỷ lệ chuyển người thay đổi |
 
 ---
 
@@ -407,7 +416,7 @@ Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [g
 
 | Rủi ro | Khả năng | Tác động | Người phụ trách (PIC, một người) | Dấu hiệu (metric nào, ngưỡng nào) | Xử lý | Ảnh hưởng bước đánh giá | Nhóm chức năng (GOVERN / MAP / MEASURE / MANAGE) |
 |---|---|---|---|---|---|---|---|
-| | | | | | | | |
+| Khách gửi ticket có nội dung rất dài nhưng không có dấu phân cách `---`, khiến `pre_guard` không cắt đúng phần nội dung cần thiết và làm tăng chi phí LLM | Trung bình | Chi phí xử lý bình quân tăng, ROI giảm; có thể khiến chi phí trợ lý vượt 10.000đ/ticket làm tay | Lê Thanh Tùng (`NV-TUNG`) | `max_cost_per_ticket_by_warehouse_vnd` > 10.000đ/ticket hoặc `llm_cost_max_per_ticket_vnd` > 1.500đ | Bổ sung kiểm tra độ dài đầu vào độc lập với dấu phân cách; nếu vượt giới hạn thì yêu cầu rút gọn hoặc chuyển người trước khi gọi LLM. Theo dõi chi phí theo từng kho và dừng pilot tại kho vượt ngưỡng | Bổ sung ticket dài không có `---` vào behavioral test; chạy lại `lab10.eval` và `lab10.grade`, so sánh chi phí theo kho và ROI trước khi mở rộng pilot | MEASURE / MANAGE |
 
 Quy tắc: **mỗi dòng phải đổi được một quyết định.** Cột "Dấu hiệu" phải là một metric có trong `monitors.py` hoặc trong report.
 
@@ -430,19 +439,34 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 
 | Câu hỏi | Trả lời |
 |---|---|
-| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | |
-| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | |
-| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | |
-| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | |
-| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | |
-| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | |
-| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | |
+| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | Có ba tín hiệu cần theo dõi: `wrongful_refund_vnd` phải bằng 0; `wrongful_carrier_faults` phải bằng 0; chi phí mỗi ticket theo kho không được vượt 10.000đ. Ngoài ra, `llm_cost_max_per_ticket_vnd` không được vượt 1.500đ và ROI phải đạt tối thiểu 0,2. Trước sự cố, các chỉ số chi phí và ROI đã có trong report nhưng chưa có monitor riêng theo kho. C8 mới bổ sung `max_cost_per_ticket_by_warehouse_vnd`. |
+| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | Giữ ngưỡng chi phí xử lý tối đa 10.000đ/ticket, tương đương chi phí làm tay; giữ trần LLM 1.500đ/ticket và ROI tối thiểu 0,2. Bổ sung cảnh báo đỏ khi `max_cost_per_ticket_by_warehouse_vnd > 10.000`. Với hoàn sai và lỗi hãng oan, đặt ngưỡng 0; chỉ cần lớn hơn 0 là phải dừng phạm vi liên quan để điều tra. |
+| Bàn đổi gì về người (số người trực, ai đứng tên, ai được gọi)? | Chị Hạnh tiếp tục là người duyệt các ca chuyển người và chịu trách nhiệm quyết định hoàn trong phạm vi được phân quyền. Nhân viên trực phải ghi `decision_note` cho quyết định cần duyệt; kiểm mẫu tối thiểu 10% quyết định tự động. Khi phát hiện hoàn trùng hoặc ghi lỗi hãng sai, báo ngay cho người phụ trách vận hành và người phụ trách pháp lý; không để trợ lý tự xử lý tiếp các ca liên quan. |
+| Bàn đổi gì về phạm vi hoặc quy trình (kiểm mẫu, ghi chú giải thích, trần)? | Loại HCM-B2B khỏi `business.pilot_scope`, chuyển nhóm này sang quy trình làm tay để tránh phát sinh cả tiền LLM lẫn công người. Trước khi hoàn, bắt buộc đối chiếu tổng tiền đã hoàn trong `ledger_rows`, bao gồm cả `basis: manual`. Bật `operations.decision_note = true`, `review_sampling_pct = 10`. Nếu chi phí một kho vượt 10.000đ/ticket hoặc ROI dưới 0,2 thì tạm dừng phạm vi đó để đánh giá lại. |
+| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | Người phụ trách vận hành phối hợp với pháp lý rà soát các đơn có hoàn trùng và lỗi hãng bị ghi oan. Với GHSH/VNX, chỉ gửi thông tin đính chính sau khi xác minh đúng đơn, kiện và nguyên nhân; thông báo rõ mã đơn, nội dung ghi nhận sai và kết quả đối soát. Với khách hàng bị ảnh hưởng, CSKH giải thích số tiền đã hoàn và phần còn được hoàn, tránh hứa hoàn thêm khi chưa đối chiếu sổ cái. Thực hiện rà soát trong 1 ngày làm việc kể từ khi xác nhận sự cố. |
+| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | Tài liệu S5 hiện có chưa cung cấp bằng chứng xác nhận dữ liệu cá nhân nào đã bị gửi ra ngoài trong sự cố này. Không kết luận có rò rỉ PII khi chưa có log chứng minh. Cần kiểm tra payload `notify_carrier` và log gửi hãng; nếu phát hiện dữ liệu cá nhân đã bị gửi, báo người phụ trách pháp lý và người phụ trách bảo mật để đánh giá phạm vi, bên nhận và nghĩa vụ thông báo. |
+| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | Sự cố được phát hiện qua việc đọc trace, đối chiếu `ledger_rows` và report kinh doanh: các ticket S5-02, S5-03, S5-20, S5-21 cho thấy hoàn trùng; report cho thấy chi phí HCM-B2B là 11.326đ/ticket. Trước đó chưa có monitor chuyên biệt theo kho; C8 mới bổ sung `max_cost_per_ticket_by_warehouse_vnd`. Cần bổ sung cảnh báo tự động cho hoàn trùng, hoàn sai và lỗi hãng oan thay vì chỉ phát hiện khi đối soát hoặc đọc trace. |
 
 ### Runbook 5 · Ba kịch bản "nếu … thì …" cho tuần đầu chạy thử thật
 
-1. Nếu số ticket tăng gấp ___ lần trong một giờ thì: …
-2. Nếu nhà cung cấp LLM lỗi quá ___ phút thì: …
-3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: …
+1. Nếu số ticket tăng gấp 2 lần trong một giờ thì:
+   - Người trực kiểm tra số ticket tồn, số ca chuyển duyệt và năng lực xử lý của CSKH.
+   - Nếu lượng ca vượt công suất duyệt hoặc thời gian chờ tối đa trong `operations`, tạm thu hẹp pilot, chuyển các ticket ngoài phạm vi sang quy trình làm tay.
+   - Không tăng tự động hạn mức hoàn hoặc bỏ bước kiểm tra để giải quyết nhanh.
+   - Chị Hạnh quyết định phân bổ người trực và báo người phụ trách vận hành.
+
+2. Nếu nhà cung cấp LLM lỗi quá 5 phút thì:
+   - Tạm ngừng gửi yêu cầu mới tới LLM, không thử gọi lặp liên tục gây phát sinh chi phí.
+   - Chuyển ticket sang hàng chờ CSKH xử lý thủ công; các ca hoàn tiền vẫn phải đối chiếu `ledger_rows`.
+   - Người trực ghi nhận thời điểm bắt đầu lỗi, số ticket bị ảnh hưởng và thông báo cho người phụ trách vận hành.
+   - Chỉ bật lại trợ lý sau khi kiểm tra nhà cung cấp đã hoạt động ổn định và chạy thử một số ticket kiểm tra.
+
+3. Nếu người duyệt báo không tin một quyết định của trợ lý thì:
+   - Tạm dừng thực hiện lệnh ghi liên quan, đặc biệt là `issue_refund` và `file_carrier_fault`.
+   - Chuyển ticket cho chị Hạnh kiểm tra lại tracking, chính sách có hiệu lực, `ledger_rows` và nội dung giải thích của trợ lý.
+   - Ghi `decision_note`, lưu mã ticket và nguyên nhân người duyệt không đồng ý.
+   - Nếu phát hiện sai, sửa quyết định và bổ sung behavioral test tương ứng; nếu chưa xác định được nguồn dữ liệu đúng, tiếp tục xử lý thủ công.
+   - Chỉ cho phép trợ lý xử lý lại sau khi người phụ trách xác nhận nguyên nhân đã được khắc phục.
 
 ---
 
