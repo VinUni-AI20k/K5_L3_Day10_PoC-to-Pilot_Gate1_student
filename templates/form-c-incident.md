@@ -255,9 +255,9 @@ Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): …
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
-Giả định (thứ nằm NGOÀI phần mềm): …
+Giả định (thứ nằm NGOÀI phần mềm):Người thiết kế ngầm giả định rằng lượng ticket phát sinh tương đối ổn định và đủ lớn để phân bổ chi phí vận hành trợ lý AI (chi phí gọi LLM, hạ tầng và nhân sự giám sát) trên nhiều ticket, từ đó khiến chi phí bình quân mỗi ticket thấp hơn xử lý thủ công
 
-Vì sao có thể sai: …
+Vì sao có thể sai: Trong thực tế, lượng ticket không ổn định mà có thể tăng đột biến vào ngày sale hoặc sau bão, thậm chí gấp ba lần trong một giờ. Khi đó, doanh nghiệp có thể phải tăng người trực duyệt, xử lý thêm các ca phức tạp hoặc gọi LLM nhiều lần. Ngược lại, khi lượng ticket thấp, chi phí vận hành cố định vẫn phát sinh nhưng được phân bổ trên ít ticket hơn. Vì vậy, chi phí bình quân mỗi ticket có thể vượt mức 10.000đ làm thủ công
 
 ---
 
