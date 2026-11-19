@@ -1,17 +1,12 @@
 {
-  "team": "K5-L3B-DAY10-HiLab-PoCtoPilotGate1",
-  "members": [
-    "TranDuyThanh-2A202603919",
-    "VoThiPhuongNhung-2A202603918",
-    "NguyenTienDat-2A202603922",
-    "NguyenAnhQuan-2A202603950"
-  ],
+  "team": "",
+  "members": [],
   "incident": "",
-  "decision_v1": "Cải tiến thêm",
-  "decision_v2": "Thu hẹp",
+  "decision_v1": "",
+  "decision_v2": "",
   "three_lines": {
-    "environment_assumption": "Thiết kế đang giả định rằng dữ liệu gốc trong tracking DB tại bưu cục (promised_date, delivered_date, delay_cause) luôn được nhân viên quét đúng sự thật và lưu lượng ticket chuyển người duyệt không vượt quá khả năng huy động tối đa của ca trực CSKH (reviewers_on_shift x 6 ca/giờ).",
-    "reduce_or_prevent": "Các cổng code (write_gate, pre_guard) và cổng pháp lý (legal) NGĂN HẲN việc model tự suy diễn ngày trễ, hoàn trùng trong ngày, dùng approval_id không hợp lệ, phạt hãng khi thiếu delay_cause và gửi trường recipient_contact/customer_note sang hãng vì kiểm tra tất định ngoài model trước lệnh ghi; riêng cổng vận hành và kinh doanh (reviewers_on_shift, pilot_scope, daily_refund_cap_vnd) giúp GIẢM KHẢ NĂNG ùn hàng chờ và giới hạn thiệt hại tài chính trong ngưỡng tải thiết kế.",
-    "measure_in_pilot": "Trong pilot thật cần đo lại phân phối thời gian đến thực tế của ticket vào giờ cao điểm để hiệu chỉnh reviewers_on_shift, thời gian thực tế một nhân viên CSKH duyệt 1 ca có kèm decision_note, tỉ lệ lệch/thiếu delay_cause từ bưu cục thật, độ trễ và tỉ lệ lỗi 429 của API LLM thật, cùng chi phí vận hành thực tế theo từng kho trước Bước đánh giá 2."
+    "environment_assumption": "",
+    "reduce_or_prevent": "",
+    "measure_in_pilot": ""
   }
 }
