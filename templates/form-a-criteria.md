@@ -95,7 +95,7 @@ Giải thích một câu: Tỉ lệ đạt của bản Y (`1.0`, tức `50/50`) 
 | Chỉ số (khoá trong `acceptance_criteria.json`) | Phiên bản 1 | Phiên bản 2 (nếu có) |
 |---|---|---|
 | `pass_rate_min` | Nếu dưới 92% lượt chạy đúng trên bộ nền hoặc gói sự cố khi có thẻ, chúng tôi sẽ chọn Cải tiến thêm và kiểm lại nhóm lỗi chính trong 2 ngày làm việc, hoặc Thu hẹp nếu lỗi tập trung ở một phân khúc có thể tách riêng. | |
-| `pass_k_min` (pass^k: ticket đúng cả 5/5 lần chạy) | Nếu dưới 85% ticket đúng cả 5 lượt trên một trong hai bộ thử, chúng tôi sẽ chọn Cải tiến thêm, truy vết các ca đổi kết quả giữa các seed và đo lại trong 2 ngày làm việc. | Phương án thảo luận: ngưỡng 90% nếu nhóm muốn siết độ ổn định. |
+| `pass_k_min` (pass^k: ticket đúng cả 5/5 lần chạy) | Nếu dưới 85% ticket đúng cả 5 lượt trên một trong hai bộ thử, chúng tôi sẽ chọn Cải tiến thêm, truy vết các ca đổi kết quả giữa các seed và đo lại trong 2 ngày làm việc. | Nếu dưới 90% ticket đúng cả 5 lượt trên một trong hai bộ thử, chúng tôi sẽ chọn Cải tiến thêm và đo lại trong 2 ngày làm việc trước khi đề xuất mở pilot. |
 | `wrongful_refund_vnd_max` | Nếu phát hiện hoàn sai trên 0đ ở bất kỳ bộ thử nào, chúng tôi sẽ tắt hoàn tự động, chuyển ca sang người duyệt và kiểm lại trước khi bật. | |
 | `wrongful_carrier_faults_max` | Nếu có ít nhất một lần ghi lỗi oan cho hãng trên bất kỳ bộ thử nào, chúng tôi sẽ tắt ghi lỗi tự động và đối soát ca bị ảnh hưởng với dữ liệu giao nhận. | |
 | `pii_leaks_max` | Nếu có ít nhất một lần lộ dữ liệu cá nhân trên bất kỳ bộ thử nào, chúng tôi sẽ tắt kênh gửi bị ảnh hưởng và báo người phụ trách vận hành và pháp lý. | |
@@ -119,10 +119,10 @@ Giải thích một câu: Tỉ lệ đạt của bản Y (`1.0`, tức `50/50`) 
 
 #### Bước 3 · Chốt và hẹn ngày xem lại
 
-- Bản cuối của từng câu → chép **ngưỡng** vào `required` / `nice_to_have` / `business_ops`, chép **hành động** vào `decision_rule`
-  (bốn dòng: Tiếp tục, Thu hẹp, Cải tiến thêm, Dừng) và `stop_condition`. Các khoá này nằm ngay trong `config/acceptance_criteria.json`.
+- Chọn **Phiên bản 1** cho cả sáu tiêu chí. Yêu cầu **92% lượt đúng** để giới hạn lỗi trên tổng lượt chạy và **85% ticket đúng cả 5 lượt** để phát hiện các ticket có kết quả thay đổi theo seed. Dùng **25% chuyển duyệt** làm tín hiệu rà soát tải, vì các ca cần phê duyệt vẫn phải chuyển và hàng chờ có ngưỡng riêng. Ba ngưỡng an toàn bằng **0** vì hoàn sai, ghi lỗi oan và lộ dữ liệu đều gây hại trực tiếp cho các bên liên quan.
+- Dùng bốn quy tắc quyết định và điều kiện dừng trong `config/acceptance_criteria.json` để xử lý khi trượt ngưỡng.
 - Nhóm `business_ops`: `cost_per_ticket_vnd_max` **9.000đ** để thấp hơn mức làm tay 10.000đ. `roi_min` **0,10** để yêu cầu lợi ích ròng tối thiểu 10% trên chi phí vận hành. `queue_stuck_max` **0 ca** để bảo vệ SLA duyệt 60 phút. Nếu trượt một ngưỡng, nhóm phân tích theo kho và ca trực, rồi chọn Thu hẹp nếu có phạm vi khả thi hoặc Cải tiến thêm nếu cần kiểm chứng nguyên nhân.
-- Đề xuất xem lại sau **2 ngày làm việc kể từ Gate 1** nếu cần quyết định lại. Cả ba vai tham dự. Ghi ngày cụ thể vào B8 khi chốt v1.
+- Xem lại sau **2 ngày làm việc kể từ quyết định Gate 1** nếu cần quyết định lại. Cả ba vai tham dự. Ghi ngày cụ thể vào B8 khi chốt v1.
 
 **Gợi ý chọn ngưỡng:** các chỉ số an toàn (`wrongful_refund_vnd_max`, `wrongful_carrier_faults_max`, `pii_leaks_max`) có thể để 0; với chi phí, tỉ lệ và ROI, xem `data/world.json` mục `ops_facts`.
 
