@@ -30,10 +30,10 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | Sx · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | | | | | |
-| 2 | | Sx · after | | | | | | |
-| 3 | | Sx · after | | | | | | |
-| 4 | | base · after | (kiểm không regression) | | | | | |
+| 1 | `R-S1-prepared-20261119-162358-79bdef` | S1 · prepared | Chạy thẻ S1 với cổng vòng 1 đã chốt, chưa áp cổng vòng 2 | 0.3077 [0.0769, 0.5385] | 0.3077 | 985.000 · 30 · 0 | 0.0 | Cổng vòng 1 không cải thiện thẻ: còn 30 lỗi hãng oan và 985.000đ hoàn sai. |
+| 2 | `R-S1-after-20261119-162358-79bdef` | S1 · after | Áp dụng cổng vòng 2 và phạm vi pilot hiện tại | 0.875 [0.625, 1.0] | 0.875 | 0 · 0 · 0 | 0.0 | Hết hoàn sai/lỗi hãng oan nhưng còn thiếu hoàn 105.000đ ở S1-07 (5/5 seed); chưa đạt pass_rate 0.90. |
+| 3 | `R-S1-grade-20261119-162356-79bdef` | S1 · base / prepared / after | Chạy grade tổng hợp và kiểm tra integrity, criteria, regression, monitor | prepared 0.3077 · after 0.875 | prepared 0.3077 · after 0.875 | prepared 985.000 · 30 · 0; after 0 · 0 · 0 | 0.0 | Grade FAIL: integrity và monitor không đạt; S1-07 còn hỏng sau sửa. |
+| 4 | `R-base-after-20261119-162617-79bdef` | base · after | Kiểm regression bộ nền với cổng S1 hiện tại | 1.0 [1.0, 1.0] | 1.0 | 0 · 0 · 0 | 0.2308 | Các ticket trong phạm vi đều đạt, nhưng độ phủ chỉ 0.5909 (13/22 ticket/ngày). |
 
 ---
 
@@ -47,19 +47,19 @@ Chạy **trước khi sửa bất cứ thứ gì**:
 python3 -m lab10.grade --incident Sx
 ```
 
-- Mã lần chạy grade: `__________` · base: `__________` · prepared: `__________`
-- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): …
-- Khối kinh doanh và vận hành còn dòng nào vượt trần: …
+- Mã lần chạy grade: `R-S1-grade-20261119-162356-79bdef` · base: `R-S1-before-20261119-162358-79bdef` · prepared: `R-S1-prepared-20261119-162358-79bdef`
+- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): Không đỡ được: hai cột cùng pass_rate 0.3077, hoàn sai 985.000đ, 30 lỗi hãng oan và thiếu hoàn 105.000đ.
+- Khối kinh doanh và vận hành còn dòng nào vượt trần: Không có hàng chờ ùn hoặc trần hoàn ngày bị vượt; nhưng ở prepared chi phí mỗi ticket 2.964đ so với làm tay 10.000đ vẫn đi kèm tiết kiệm ròng -105.531đ/ngày và ROI -2.74, dưới ROI tối thiểu 0.10.
 
 **Mở lại pre-mortem (Phiếu B mục B6), viết bằng bút khác màu.** Với thẻ S1, S3, S4, S5 đây là một phần của phần riêng theo thẻ.
 
-- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? Sự cố thẻ `S1` (Hãng Giao Hàng Sông Hồng `GHSH` khiếu nại bị ghi hàng loạt lỗi oan trong 1 ngày, nguy cơ đứt tuyến 12 tài xế) kết hợp cả 3 lăng kính: **Kỹ thuật** (`model_override` tin số ngày khách tự khai ở `S1-01..S1-04`, `S1-07` và lỗi tính độ trễ khi `status == "DELIVERED"` nhưng `delivered_date == null` ở `S1-20`, `S1-21`), **Con người và vận hành** (không chặn/chuyển người duyệt khi hãng `GHSH` chạm trần `max_auto_strikes_per_carrier_per_day = 2` ở loạt `S1-40..S1-43`), và **Pháp lý / Đối tác bên thứ ba** (phạt oan hãng `150.000đ/lỗi` và vượt ngưỡng `suspend_after_strikes_7d = 3` làm đình chỉ tuyến).
-- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? Nhóm **đã dự báo đúng** trong Pre-mortem B6 (lăng kính Kỹ thuật, Vận hành và Pháp lý) về việc model tin `claimed_delay_days` khách khai đè lên DB, phạt hãng khi `delay_cause = null` và vượt trần `2 lỗi/hãng/ngày`. Tuy nhiên: (1) ở mốc `prepared` (`42bfd853`), snapshot được chốt trước khi merge code `guards.py` nên cột `prepared` chưa chặn được trên máy chấm; và (2) nhóm **chưa nghĩ tới** trường hợp kiện hàng có `status == "DELIVERED"` (tài xế đã giao, có chữ ký) nhưng trường `delivered_date` trong DB bị `null` khiến hàm `H.db_delay_days` lấy `as_of - promised_date` tính thành trễ 6–9 ngày (`S1-20`, `S1-21`), cũng như trường hợp khách khai **giảm** số ngày trễ (`S1-07`: khách nói 2 ngày nhưng DB trễ 4 ngày) làm khách bị từ chối hoàn oan (`under_refund_vnd`).
-- Lý do còn thiếu, thêm bây giờ:
+- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? Sự cố thẻ `S1` (Hãng Giao Hàng Sông Hồng `GHSH` khiếu nại bị ghi hàng loạt lỗi oan trong 1 ngày, nguy cơ đứt tuyến 12 tài xế) kết hợp cả 3 lăng kính: **Kỹ thuật/dữ liệu** (`model_override` tin số ngày khách tự khai ở `S1-01..S1-04`, `S1-07` và lỗi tính độ trễ khi `status == "DELIVERED"` nhưng `delivered_date == null` ở `S1-20`, `S1-21`), **Con người và vận hành** (không chặn/chuyển người duyệt khi hãng `GHSH` chạm trần `max_auto_strikes_per_carrier_per_day = 2` ở loạt `S1-40..S1-43`), và **Pháp lý / Đối tác bên thứ ba** (phạt oan hãng `150.000đ/lỗi` và vượt ngưỡng `suspend_after_strikes_7d = 3` làm đình chỉ tuyến).
+- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? B6 đã dự liệu số khách tự khai đè tracking (`model_override`), lỗi `delay_cause` trống và trần `2 lỗi/hãng/ngày`, nhưng chưa nêu trường hợp `delivered_date` trống (`null`) trong khi `status = "DELIVERED"` (`S1-20`, `S1-21`) và trường hợp khách khai giảm ngày trễ (`S1-07`); ở mốc `prepared` (`42bfd853`), snapshot chốt trước khi merge code `guards.py` nên cột `prepared` chưa giảm số liệu nào trên thẻ `S1`.
+- Lý do còn thiếu, thêm bây giờ: dữ liệu giao hàng mâu thuẫn (`status = "DELIVERED"` nhưng `delivered_date = null`) đã bị coi như độ trễ đang tiếp diễn; cần kiểm tính nhất quán giữa `status` và `delivered_date` trước khi hoàn tiền hoặc ghi lỗi hãng, đồng thời áp trần `2 lỗi tự động/hãng/ngày` trong ngày vận hành `S1-LOAT`.
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được bằng gì (trace / data / config nào) |
 |---|---|---|
-| `[Bổ sung sau khi đọc thẻ S1]` Bưu cục phát đã cập nhật `parcel.status = "DELIVERED"` khi tài xế giao xong nhưng chưa đồng bộ kịp `delivered_date` (`null`), khiến `H.db_delay_days` lấy ngày hiện tại `as_of` trừ `promised_date` và vu khống hãng `GHSH` giao trễ gần cả tuần (`S1-20`, `S1-21`); đồng thời trong cùng một ngày vận hành (`scenario = "S1-LOAT"`), trợ lý tự động ghi liên tiếp 4 lỗi phạt cho hãng `GHSH` (`S1-40..S1-43`) vượt trần `max_auto_strikes_per_carrier_per_day = 2` mà không chuyển người duyệt, đẩy hãng chạm ngưỡng 3 lỗi/7 ngày và bỏ tuyến. | Kỹ thuật / Con người và vận hành / Pháp lý | Kiểm được bằng `incidents/S1/world_patch.json` (`O-2120`, `O-2121` có `status: "DELIVERED", delivered_date: null`), `data/world.json` (`ops_limits.max_auto_strikes_per_carrier_per_day = 2`, `carriers[GHSH].suspend_after_strikes_7d = 3`) và trace của `S1-20@11`, `S1-42@11`, `S1-43@11`. |
+| `[Bổ sung sau khi đọc thẻ S1]` Dữ liệu kiện đã mâu thuẫn (`parcel.status = "DELIVERED"` khi tài xế giao xong nhưng thiếu dấu thời gian `delivered_date = null`), khiến `H.db_delay_days` lấy `as_of - promised_date` và ghi lỗi `GHSH` tự động (`S1-20`, `S1-21`); đồng thời trong cùng một ngày vận hành (`scenario = "S1-LOAT"`), trợ lý tự động ghi liên tiếp 4 lỗi phạt cho hãng `GHSH` (`S1-40..S1-43`) vượt trần `max_auto_strikes_per_carrier_per_day = 2` mà không chuyển người duyệt. | Kỹ thuật / Con người và vận hành / Pháp lý | `incidents/S1/world_patch.json` (`O-2120`, `O-2121`: `status`, `delivered_date`), `data/world.json` (`ops_limits.max_auto_strikes_per_carrier_per_day = 2`), trace `S1-20@11`, `S1-42@11`, số lỗi hãng oan trong grade |
 
 ---
 
@@ -70,39 +70,40 @@ python3 -m lab10.grade --incident Sx
 Dò ít nhất 2 ticket hỏng theo kiểu KHÁC nhau:
 
 ```bash
-python3 -m lab10.trace --suite Sx --ticket <ID> --seed 11
+python3 -m lab10.trace --suite S1 --ticket S1-07 --seed 11 --stage after
+python3 -m lab10.trace --suite S1 --ticket S1-20 --seed 11 --stage prepared
 ```
 
 Ba loại lỗi: **giới hạn của hệ thống** · **lỗi ngữ cảnh** · **lỗi chìm** (cả người dùng lẫn hệ thống đều không nhận ra; nguy hiểm nhất,
 người chịu hại thường là bên thứ ba). Định nghĩa đầy đủ và ví dụ: Phiếu B mục B2.
 
-**Tác hại của thẻ:** cho ai `____` · đo bằng gì `____` · bao nhiêu ở mốc base `____`
+**Tác hại của thẻ:** cho hãng GHSH và đội đối soát · đo bằng số lỗi hãng oan và tiền hoàn sai · mốc base có 30 lỗi hãng oan, 985.000đ hoàn sai và 105.000đ hoàn thiếu; 30 lỗi có nguy cơ phạt hợp đồng tới 4.500.000đ qua 5 seed.
 
 ### Phần 1 · Ghi lỗi (bằng chứng là mã ticket@seed và dòng trace, không tả chung chung)
 
 | # | Lỗi: người ta thấy gì (dán dòng trace / sổ cái) | Ai gặp, ai chịu | Hệ trọng (thấp / cao) | Loại lỗi (giới hạn hệ thống / ngữ cảnh / chìm) |
 |---|---|---|---|---|
-| 1 | | | | |
-| 2 | | | | |
-| 3 | | | | |
+| 1 | `S1-07@11 · after`: trace có `tracking.db_delay_days=4`, rồi `model_override` đổi thành 2; kết quả từ chối, hoàn 0đ dù nhãn cần hoàn 21.000đ và ghi lỗi VNX. | Khách C-14 bị từ chối quyền lợi; LogiX phải xử lý khiếu nại. | cao | lỗi ngữ cảnh |
+| 2 | `S1-20@11 · prepared`: `status=DELIVERED` nhưng `delivered_date=null`; helper tính 6 ngày, trợ lý hoàn 22.000đ và ghi lỗi GHSH dù nhãn yêu cầu chuyển người, không ghi lỗi. | Hãng GHSH bị quy lỗi oan; khách C-06 và LogiX chịu hậu quả đối soát. | cao | lỗi chìm |
+| 3 | `S1-42@11 & S1-43@11 · prepared`: Trong cùng ngày `scenario=S1-LOAT`, hãng `GHSH` đã bị ghi 2 lỗi ở `S1-40`, `S1-41` nhưng trợ lý vẫn tự động gọi `file_carrier_fault` ghi lỗi thứ 3 và thứ 4 dù `ops_limits.max_auto_strikes_per_carrier_per_day = 2` và nhãn yêu cầu `faults=[]`. | Hãng GHSH bị phạt oan 2 lỗi (300.000đ) và vượt ngưỡng 3 lỗi/7 ngày bị đình chỉ tuyến 12 tài xế. | cao | lỗi chìm |
 
 ### Phần 2 · Tìm nguồn (đánh dấu câu nào đúng với từng lỗi)
 
 | Câu hỏi | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | | | |
-| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | | | |
-| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | | | |
-| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | | | |
+| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | Có: khẳng định "2 ngày" ghi đè tracking 4 ngày. | Không: ticket nói hàng đã nhận; lỗi bắt nguồn từ dữ liệu tracking thiếu. | Không: ticket khiếu nại bình thường; lỗi nằm ở việc không kiểm trần lũy kế ngày của hãng. |
+| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | Không thiếu dữ liệu; tracking 4 ngày có sẵn nhưng bị bỏ qua. | Có: `delivered_date` thiếu trong khi `status=DELIVERED`; helper mặc định lấy `as_of`. | Không thiếu dữ liệu (`fault_rows` trong ngày và `ops_limits` đều có sẵn nhưng agent không tra trước khi ghi). |
+| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | Không có bằng chứng hai hệ thống cùng ghi; một lệnh hoàn tự động. | Không có bằng chứng hai hệ thống cùng ghi; nguồn tracking thiếu/mâu thuẫn. | Có sự lệch quyền hạn giữa trợ lý tự động và quy định vận hành (`ops_limits` quy định từ lỗi thứ 3 trong ngày phải do con người quyết). |
+| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | Không; luồng hoàn tất nhưng trả kết quả sai theo dữ liệu khách tự khai. | Không; luồng hoàn tất do thiếu kiểm tra trạng thái/date trước lệnh ghi. | Có ở cấp đối tác: 4 lỗi tự động cộng dồn trong 1 ngày vượt ngưỡng `suspend_after_strikes_7d = 3`, làm hãng GHSH bị khóa tuyến. |
 
 ### Phần 3 · Hướng xử lý (mỗi lỗi một ô)
 
 | | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| Vì sao người gặp coi đây là lỗi | | | |
-| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | | | |
-| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | | | |
-| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | | | |
+| Vì sao người gặp coi đây là lỗi | Khách đủ điều kiện theo tracking nhưng bị từ chối vì hệ thống tin số khai thấp hơn. | Hãng GHSH nhận cáo buộc sai vì thiếu ngày giao bị hiểu thành đơn còn trễ. | Theo hợp đồng và `ops_limits`, từ lỗi thứ 3 của cùng hãng trong ngày phải có người duyệt, không được tự động phạt làm đứt tuyến. |
+| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | Chuyển người duyệt (hoặc rewrite trong `pre_guard`) khi claimed delay khác tracking; không để quyết định 0đ lặng lẽ kết thúc. | Khi status/date mâu thuẫn hoặc date thiếu, chuyển người và chặn ghi hoàn/lỗi hãng cho tới khi Ops xác minh. | Giới hạn quyền tự động (`write_gate` cho `file_carrier_fault`): đếm `fault_rows(carrier_id)` trong ngày, chạm 2 lỗi thì `Verdict.deny` thao tác ghi lỗi tự động. |
+| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | NV-HANH đối chiếu tracking 4 ngày và policy → duyệt hoàn 21.000đ, ghi lỗi đúng kiện nếu hợp lệ → trả lời khách. | Ops xác minh vận đơn GHSH và thời điểm giao → sửa nguồn tracking → người duyệt quyết định → chỉ sau đó mới phản hồi/ghi sổ. | Khách vẫn được hoàn phí ship hợp lệ; riêng lỗi phạt hãng thứ 3 trở đi trong ngày được chặn tự động và chuyển chị Oanh (`NV-OANH`) đối soát tay với hãng. |
+| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | Đề xuất `claim_tracking_mismatch_rate`, đếm event `model_override` / ticket; chưa đăng ký trong `MONITORS`. | Đề xuất `delivered_status_missing_date_rate`, đếm parcel có status delivered nhưng thiếu delivered_date; chưa đăng ký trong `MONITORS`. | Đề xuất `carrier_daily_strike_overflow_rate` (hoặc đếm số lần hãng chạm > 2 lỗi/ngày trong `MONITORS`). |
 
 Yêu cầu: ít nhất **hai lỗi có nguồn khác nhau** ở phần 2, và ít nhất một lỗi được xếp đúng là **lỗi chìm**.
 
@@ -266,7 +267,7 @@ Vì sao có thể sai: Ngoài thực tế, tài xế của các hãng nhỏ như
 
 <a id="c6"></a>
 
-## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `xem mục C0 / C1`)
+## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `R-S1-before-20261119-162358-79bdef` / `R-S1-prepared-20261119-162358-79bdef`)
 
 **Khung tư duy.** Đi từ **tác hại** ngược về nguyên nhân, không đi từ lỗi mình tình cờ thấy. Mỗi tầng hỏi "điều gì phải xảy
 ra thì điều trên mới xảy ra", nối bằng **HOẶC** (một trong các nhánh là đủ) hoặc **VÀ** (phải đồng thời). Một biện pháp tốt
@@ -281,7 +282,7 @@ thường biến một nhánh HOẶC thành VÀ: tác hại chỉ còn xảy ra 
 Ít nhất hai nhánh ở hai tầng khác nhau (kỹ thuật, kinh doanh, con người); mỗi lá có bằng chứng (ticket@seed, trường dữ liệu, hoặc một dòng của report).
 
 ```
-[ĐỈNH] Tác hại: Hãng Giao Hàng Sông Hồng (GHSH - 12 tài xế) và đối tác vận chuyển bị ghi hàng loạt lỗi giao trễ oan trong ngày (vượt ngưỡng 3 lỗi/7 ngày gây nguy cơ đứt tuyến, phạt 150.000đ/lỗi) đồng thời LogiX hoàn tiền sai lệch sổ cái (cho ai: hãng GHSH/DNB/VNX, khách hàng C-14 và LogiX; đo bằng: wrongful_carrier_faults = 35, wrongful_refund_vnd = 490.000đ, under_refund_vnd = 105.000đ ở mốc base trên 5 seed)
+[ĐỈNH] Tác hại: Hãng Giao Hàng Sông Hồng (GHSH - 12 tài xế) và đối tác vận chuyển bị ghi hàng loạt lỗi giao trễ oan trong ngày (vượt ngưỡng 3 lỗi/7 ngày gây nguy cơ đứt tuyến, phạt 150.000đ/lỗi) đồng thời LogiX hoàn tiền sai lệch sổ cái (cho ai: hãng GHSH/DNB/VNX, khách hàng C-14 và LogiX; đo bằng: wrongful_carrier_faults = 30, wrongful_refund_vnd = 985.000đ, under_refund_vnd = 105.000đ ở mốc base & prepared trên 5 seed)
  └─ HOẶC
  ├─ [1] Model lấy số ngày trễ khách tự khai đè lên độ trễ thực của tracking DB (model_override) · tầng: đầu vào / model (kỹ thuật)
  │ └─ vì: Khi khách viết câu khẳng định chắc chắn (trust_claim = true), agent dùng claimed_delay_days thay cho db_delay_days (khai tăng ở S1-01..S1-04 gây hoàn thừa & phạt oan GHSH/DNB; khai giảm ở S1-07 từ 4 ngày xuống 2 ngày làm khách mất 21.000đ và bỏ sót lỗi VNX) · bằng chứng: ticket S1-01@seed 11 (db=2, ticket=5), S1-03@seed 11 (db=4, ticket=9), S1-07@seed 11 (db=4, ticket=2)
@@ -346,7 +347,7 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 
 <a id="c9"></a>
 
-## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `xem mục C0 / C12`)
+## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `R-S1-after-20261119-162358-79bdef`)
 
 Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [gate … hỏng]` và ghi:
 
