@@ -1,6 +1,6 @@
 # Phiếu A · Tiêu chí và cách đo · Khối 1 (phút 15–65)
 
-**Bàn:** ______ · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
+**Bàn:** ConBoBietBayPlus · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
 
 Điền phiếu này **trước khi chạy trợ lý lần nào**. Viết xong thì chép ngưỡng sang `config/acceptance_criteria.json`, ký ở phút 60–65,
 rồi mới chạy đánh giá. Khối 1 không sửa code.
@@ -24,8 +24,8 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
-- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): …
-- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): …
+- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): Mọi khoản hoàn tiền ghi vào sổ cái, khoản trừ ví shop (`payer`) và lỗi ghi cho hãng vận chuyển (`file_carrier_fault`) đều phải khớp đúng dữ liệu thực tế và chính sách hiệu lực, không ghi trùng lặp và không thiếu căn cứ (`delay_cause`, `approval_id`), để cuối tuần chị Oanh đối soát công nợ với hãng và shop khớp 100%, không phát sinh khiếu nại sai lệch sổ sách.
+- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): Lượng ca trợ lý chuyển sang hàng chờ phải nằm trong công suất trực của ca (tối đa 6 ca/giờ mỗi người duyệt, không có ca chờ quá hạn SLA 60 phút), đồng thời mọi ca chuyển duyệt hoặc tự động đều có ghi chú căn cứ rõ ràng (`decision_note`) và dùng phê duyệt hợp lệ đúng thẩm quyền (`NV-HANH`), giúp đội CSKH duyệt gọn trong hạn mà không phải kiểm lại thủ công từ đầu.
 
 ---
 
